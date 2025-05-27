@@ -2,6 +2,7 @@ package hello.hellospring.repository;
 
 import hello.hellospring.domain.Member;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -9,8 +10,19 @@ import java.util.List;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 public class MemoryMemberRepositoryTest {
-    MemberRepository repository = new MemoryMemberRepository();
+    MemoryMemberRepository repository = new MemoryMemberRepository();
 
+    @AfterEach
+    public void afterEach(){
+        /*
+        테스트가 끝날 때마다 리포지토리를 깔끔하게 지워주는 코드
+
+        전체 테스트 실행시 예상치 못한 오류(ex. 중복 데이터)로 중단되는 것을 방지
+
+        테스트 코드 메서드가 '종료될때마다 호출'되는 콜백함수
+         */
+        repository.clearStore();
+    }
 
 
     @Test
