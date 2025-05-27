@@ -1,7 +1,7 @@
 package hello.hellospring.repository;
 
 import hello.hellospring.domain.Member;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class MemoryMemberRepositoryTest {
@@ -15,6 +15,6 @@ public class MemoryMemberRepositoryTest {
         repository.save(member);
 
         Member result = repository.findById(member.getId()).get();
-        Assertions.assertEquals(result, member);
+        Assertions.assertThat(member).isEqualTo(result);
     }
 }
