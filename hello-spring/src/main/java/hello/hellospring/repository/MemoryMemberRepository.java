@@ -1,12 +1,9 @@
 package hello.hellospring.repository;
 
 import hello.hellospring.domain.Member;
-import org.springframework.stereotype.Repository;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
-@Repository
 public class MemoryMemberRepository implements MemberRepository{
     //private static Map<Long, Member> store = new ConcurrentHashMap<>(); // 실무에선 동시성 문제 때문에 ConcurrentHashMap를 사용
     private static Map<Long, Member> store = new HashMap<>();
