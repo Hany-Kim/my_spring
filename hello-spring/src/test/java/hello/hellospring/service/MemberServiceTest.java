@@ -28,6 +28,27 @@ class MemberServiceTest {
     }
 
     @Test
+    public void 중복_회원_예외() {
+        // given
+        Member member1 = new Member();
+        member1.setName("spring");
+
+        Member member2 = new Member();
+        member2.setName("spring");
+
+        // when
+        memberService.join(member1);
+        try {
+            memberService.join(member2);
+            fail(); // 테스트에 예외가 발생해야 함.
+        } catch (IllegalStateException e) {
+            assertThat(e.getMessage()).isEqualTo("이미 존재하는 회원입니다.");
+        }
+
+        // then
+    }
+
+    @Test
     void findMembers() {
     }
 
