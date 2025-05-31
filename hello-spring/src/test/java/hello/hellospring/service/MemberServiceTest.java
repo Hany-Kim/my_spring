@@ -4,6 +4,7 @@ import hello.hellospring.domain.Member;
 import hello.hellospring.repository.MemoryMemberRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
@@ -13,8 +14,21 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MemberServiceTest {
 
-    MemberService memberService = new MemberService();
-    MemoryMemberRepository memberRepository = new MemoryMemberRepository();
+    MemberService memberService;
+    MemoryMemberRepository memberRepository;
+    @BeforeEach
+    public void beforeEach() {
+        /*
+        //MemoryMemberRepository memberRepository = new MemoryMemberRepository();
+        test클래스에서 new MemoryMemberRepository(), 새로운 객체를 만들어서 사용하면, 원래 객체와 내용물이 달라질 수 있다.
+        테스트하기 안좋다.
+
+        현재는 메모리 변수가 static으로 선언되어 괜찮으나,
+        객체의 변수가 static으로 선언되지 않으면 문제가 된다.
+        */
+        memberRepository = new MemoryMemberRepository();
+        memberService = new MemberService(memberRepository);
+    }
 
     @AfterEach
     public void afterEach() {
