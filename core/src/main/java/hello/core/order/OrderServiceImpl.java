@@ -7,15 +7,23 @@ import hello.core.member.MemoryMemberRepository;
 
 public class OrderServiceImpl implements OrderService {
 
-    private final MemberRepository memberRepository = new MemoryMemberRepository();
-
     /*
-    할인 정책을 변경하는 방법 2
-    인터페이스에만 의존, 구체(구현)에는 의존 x
+    할인 정책을 변경하는 방법 3
 
-    문제 1: 하지만 구현체가 없어, discountPolicy의 .discount()를 호출할 수 없다. (NullPointerException 발생)
+    클라이언트(OrderServiceImpl)에서는 할인정책 변경하더라도,
+    수정(변경)되는 코드는 없다.
+
+    즉, 클라이언트(OrderServiceImpl)의 생성자를 통해서 어떤 구현 객체를 주입할지는 외부(AppConfig)에서 결정한다.
+    클라이언트(OrderServiceImpl)는 이제부터 "의존관계에 대한 고민은 외부"에 맡기고 "실행에만 집중" 한다.
+
      */
-    private DiscountPolicy discountPolicy;
+    private final MemberRepository memberRepository;
+    private final DiscountPolicy discountPolicy;
+
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = discountPolicy;
+    }
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
