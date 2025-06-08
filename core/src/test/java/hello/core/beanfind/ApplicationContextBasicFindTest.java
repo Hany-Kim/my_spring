@@ -1,4 +1,4 @@
-package hello.core.beanFind;
+package hello.core.beanfind;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import hello.core.AppConfig;
 import hello.core.member.MemberService;
 import hello.core.member.MemberServiceImpl;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
