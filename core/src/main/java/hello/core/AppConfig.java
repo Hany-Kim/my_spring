@@ -9,29 +9,39 @@ import hello.core.member.MemberServiceImpl;
 import hello.core.member.MemoryMemberRepository;
 import hello.core.order.OrderService;
 import hello.core.order.OrderServiceImpl;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
+/*
+@Configuration으로 '설정 정보'혹은 '구성 정보'하는 곳을 표시(등록)
+ */
+@Configuration
 public class AppConfig {
 
     /*
-    리팩토링 장점
+    Spring을 사용해 DI(의존성 주입) 컨테이너 관리
 
-    '역할'과 '역할에 대한 구현'이 한눈에 보임
-    즉, 구성정보가 한눈에 보임
+    각 메서드에 @Bean을 사용하면 spring컨테이너에 등록
      */
 
+    @Bean
     public MemberService memberService() {
         return new MemberServiceImpl(memberRepository());
     }
 
+    @Bean
     public OrderService orderService() {
         return new OrderServiceImpl(memberRepository(), discountPolicy());
     }
 
-    private static MemberRepository memberRepository() {
+    @Bean
+    public static MemberRepository memberRepository() {
         return new MemoryMemberRepository();
     }
 
-    private static DiscountPolicy discountPolicy() {
+    @Bean
+    public static DiscountPolicy discountPolicy() {
 //        return new FixDiscountPolicy();
         return new RateDiscountPolicy();
     }
