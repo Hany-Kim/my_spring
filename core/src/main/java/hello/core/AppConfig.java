@@ -53,4 +53,18 @@ public class AppConfig {
 //        return new FixDiscountPolicy();
         return new RateDiscountPolicy();
     }
+
+    /*
+    우리의 예상
+    call AppConfig.memberService
+    call AppConfig.memberRepository
+    call AppConfig.memberRepository
+    call AppConfig.orderService
+    call AppConfig.memberRepository
+
+    실제 결과
+    call AppConfig.memberService
+    call AppConfig.memberRepository
+    call AppConfig.orderService
+    */
 }
