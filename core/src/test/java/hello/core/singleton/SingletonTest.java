@@ -34,4 +34,21 @@ public class SingletonTest {
         해결 : 해당 객체 딱 1개만 생성하고, 공유되도록 함 -> 싱글톤패턴
          */
     }
+
+    @Test
+    @DisplayName("싱글톤 패턴을 적용한 객체 생성")
+    void singletonServiceTest() {
+        // new SingletonService() -> private 생성자는 다른 클래스에서 생성 안된다 == 서로 다른 인스턴스 객체 생성을 방지
+
+        SingletonService singletonService1 = SingletonService.getInstance();
+        SingletonService singletonService2 = SingletonService.getInstance();
+
+        System.out.println("singletonService1 = " + singletonService1);
+        System.out.println("singletonService2 = " + singletonService2);
+
+        // singletonService1 == singletonService2
+        assertThat(singletonService1).isSameAs(singletonService2);
+        // isSameAs : ==, 객체 인스턴스가 같은지, 참조어 비교
+        // equal : java equals 비교
+    }
 }
