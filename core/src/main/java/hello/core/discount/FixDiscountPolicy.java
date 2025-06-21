@@ -2,6 +2,7 @@ package hello.core.discount;
 
 import hello.core.member.Grade;
 import hello.core.member.Member;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 /*
@@ -12,6 +13,7 @@ OrderServiceImpl의 생성자 주입시, DiscountPolicy의 구현 클래스를 �
  */
 
 @Component
+@Qualifier("fixDiscountPolicy")
 public class FixDiscountPolicy implements DiscountPolicy {
 
     private int discountFixAmount = 1000;

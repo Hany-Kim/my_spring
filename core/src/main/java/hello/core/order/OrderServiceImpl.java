@@ -6,6 +6,7 @@ import hello.core.member.MemberRepository;
 import hello.core.member.MemoryMemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -32,9 +33,17 @@ public class OrderServiceImpl implements OrderService {
 
     */
     @Autowired
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy rateDiscountPolicy) {
+    public OrderServiceImpl(MemberRepository memberRepository, @Qualifier("mainDiscountPolicy") DiscountPolicy discountPolicy) {
+        /*
+        @Qualifier("{구분자 명}") : 구분자 이름을 통해 매칭, 빈 이름 변경하는 것은 아님
+        "필드 주입", "수정자 주입"방식에서도 동일하게 파라미터 앞에 붙여 사용 가능.
+
+        주의!
+        @Qualifier("{구분자 명}")를 사용할 때 구분자 이름을 매칭하지 못하면(찾지 못하면) 동일한 빈이름을 추가로 찾는다.
+        이 기능 때문에 빈 이름을 변경해준다고 '오해'할 수 있다. @Qualifier는 @Qualifier를 찾는 용도로만 사용하자.
+         */
         this.memberRepository = memberRepository;
-        this.discountPolicy = rateDiscountPolicy; // @Autowired 기능 중, getBean()으로 가져온 빈이 동일한 타입으로 여러개 있다면 파라미터명을 참고해 가져오는 기능 => basicScan 테스트를 통과함.
+        this.discountPolicy = discountPolicy;
     }
 
     @Override
