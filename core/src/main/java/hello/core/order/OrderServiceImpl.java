@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     /*
@@ -31,12 +30,12 @@ public class OrderServiceImpl implements OrderService {
     @RequiredArgsConstructor : 아래 생성자 주입 코드와 동일한 동작을 수행한다.
     final이 붙은 '필수값(필드)'을 파라미터로 받는 생성자를 생성한다.
 
-    @Autowired
-    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy discountPolicy) {
-        this.memberRepository = memberRepository;
-        this.discountPolicy = discountPolicy;
-    }
     */
+    @Autowired
+    public OrderServiceImpl(MemberRepository memberRepository, DiscountPolicy rateDiscountPolicy) {
+        this.memberRepository = memberRepository;
+        this.discountPolicy = rateDiscountPolicy; // @Autowired 기능 중, getBean()으로 가져온 빈이 동일한 타입으로 여러개 있다면 파라미터명을 참고해 가져오는 기능 => basicScan 테스트를 통과함.
+    }
 
     @Override
     public Order createOrder(Long memberId, String itemName, int itemPrice) {
