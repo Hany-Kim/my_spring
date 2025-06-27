@@ -13,22 +13,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LogDemoController {
 
     private final LogDemoService logDemoService;
-    private final ObjectProvider<MyLogger> myLoggerProvider;
-    /*
-    * MyLogger를 주입받지 않고 MyLogger를 감싸는 ObjectProvider를 주입 받음
-    * MyLogger 빈을 바로 찾지 않음 -> request scope 빈의 생성을 지연시킴
-    * */
+    private final MyLogger myLogger;
 
     @RequestMapping("/log-demo")
     @ResponseBody
     public String logDemo(HttpServletRequest request) throws InterruptedException {
         String requestURL = request.getRequestURL().toString();
-        MyLogger myLogger = myLoggerProvider.getObject();
+
+        System.out.println("mylogger.getClass() = " + myLogger.getClass()); // class hello.core.common.MyLogger$$SpringCGLIB$$0 => CGLIB(바이트코드 조작 라이브러리) : 스프링이 생성했다는 것을 알수 있다.
         myLogger.setRequestURL(requestURL);
 
         myLogger.log("controller test");
         Thread.sleep(100);
-        logDemoService.logic("testId");
+        logDemoService.logic("testId"); // 사실상 가짜 프록시 객체의 메서드를 호출하는 것. 다형성이기에 클라이언트는 가짜인지 진짜인지 구분이 안됨
         return "OK";
     }
 

@@ -4,10 +4,20 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import java.util.UUID;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
+/*
+* proxyMode = ScopedProxyMode.TARGET_CLASS
+* ObjectProvider로 감싸는 과정을 생략
+* MyLogger의 가짜 프록시 클래스를 만들어두고, 가짜 프록시 클래스를 다른 빈에 주입해둠.
+*
+* TARGET_CLASS : 적용대상이 클래스 (MyLogger 클래스)
+* INTERFACES : 적용대상이 인터페이스
+* */
+
 @Component
-@Scope(value = "request")
+@Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class MyLogger {
 
     private String uuid;
