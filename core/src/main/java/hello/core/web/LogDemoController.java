@@ -3,6 +3,7 @@ package hello.core.web;
 import hello.core.common.MyLogger;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -12,24 +13,21 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LogDemoController {
 
     private final LogDemoService logDemoService;
-    private final MyLogger myLogger;
+    private final ObjectProvider<MyLogger> myLoggerProvider;
     /*
-    * MyLogger는 request스코프다.
-    * request 스코프는 사용자 요청이 들어오고 나갈때까지 생명주기다.
-    *
-    * 스프링 컨테이너가 생성될 때, MyLogger를 주입받고자 하지만
-    * MyLogger는 는 request 스코프이기에 아직 등록된 빈이 없고, (=> 사용자 요청이 없었기 때문에)
-    * 스프링 컨테이너가 생성될 시점에 LogDemoController 싱글톤 빈이 생성되어야하고,
-    * 주입 받아야 MyLogger는 존재하지 않아 오류가 발생한다.
+    * MyLogger를 주입받지 않고 MyLogger를 감싸는 ObjectProvider를 주입 받음
+    * MyLogger 빈을 바로 찾지 않음 -> request scope 빈의 생성을 지연시킴
     * */
 
     @RequestMapping("/log-demo")
     @ResponseBody
-    public String logDemo(HttpServletRequest request) {
+    public String logDemo(HttpServletRequest request) throws InterruptedException {
         String requestURL = request.getRequestURL().toString();
+        MyLogger myLogger = myLoggerProvider.getObject();
         myLogger.setRequestURL(requestURL);
 
         myLogger.log("controller test");
+        Thread.sleep(100);
         logDemoService.logic("testId");
         return "OK";
     }
