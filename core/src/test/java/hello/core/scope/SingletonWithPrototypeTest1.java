@@ -7,6 +7,8 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -54,22 +56,12 @@ public class SingletonWithPrototypeTest1 {
     @Scope("singleton")
     static class ClientBean {
         @Autowired
-        private ApplicationContext ac;
+        private ObjectProvider<PrototypeBean> prototypeBeanProvider; // 인터페이스로 ObjectFactory를 상속받음
+//        private ObjectFactory<PrototypeBean> prototypeBeanProvider;
+        // ObjectProvider, ObjectFactory는 스프링에 의존횐다.
 
         public int logic() {
-            /*
-            * 해결방법1 싱글톤 빈이 프로토타입을 사용할 때마다 스프링 컨테이너에 새로 요청
-            *
-            * 의존관계를 외부에서 주입(DI) 받는게 아니라
-            * 직접 필요한 의존관계를 찾는 것을 Dependency Lookup(DL) 의존관계 조회(탐색)이라 한다.
-            *
-            * 이렇게 스프링의 ApplicationContext 전체를 주입받으면,
-            * 스프링 컨테이너에 종속적인 코드가 되고, 단위 테스트가 어려워진다.
-            *
-            * 지금 필요한 기능은 지정한 프로토타입 빈을 컨테이너에서 대신 찾아주는 딱 DL 정도의 기능만 필요하다.
-            */
-            PrototypeBean prototypeBean = ac.getBean(PrototypeBean.class);
-
+            PrototypeBean prototypeBean = prototypeBeanProvider.getObject(); // 새로운 프로토타입 빈 생성
             prototypeBean.addCount();
             int count = prototypeBean.getCount();
             return count;
