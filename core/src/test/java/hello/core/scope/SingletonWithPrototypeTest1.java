@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import hello.core.scope.PrototypeTest.PrototypeBean;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import jakarta.inject.Provider;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.ObjectFactory;
@@ -56,12 +57,10 @@ public class SingletonWithPrototypeTest1 {
     @Scope("singleton")
     static class ClientBean {
         @Autowired
-        private ObjectProvider<PrototypeBean> prototypeBeanProvider; // 인터페이스로 ObjectFactory를 상속받음
-//        private ObjectFactory<PrototypeBean> prototypeBeanProvider;
-        // ObjectProvider, ObjectFactory는 스프링에 의존횐다.
+        private Provider<PrototypeBean> provider; // 스프링에 의존적이지 않다.
 
         public int logic() {
-            PrototypeBean prototypeBean = prototypeBeanProvider.getObject(); // 새로운 프로토타입 빈 생성
+            PrototypeBean prototypeBean = provider.get();
             prototypeBean.addCount();
             int count = prototypeBean.getCount();
             return count;
