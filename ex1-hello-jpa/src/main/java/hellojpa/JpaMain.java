@@ -20,10 +20,32 @@ public class JpaMain {
 
         try {
             // 영속
-            Member findMember1 = em.find(Member.class, 101L);
-            Member findMember2 = em.find(Member.class, 101L);
+            Member member1 = new Member(150L, "A");
+            Member member2 = new Member(160L, "B");
 
-            System.out.println("result = " + (findMember1 == findMember2)); // result = true
+            em.persist(member1);
+            em.persist(member2);
+            System.out.println("===================");
+            ===================
+//            Hibernate:
+//                /* insert for
+//                    hellojpa.Member */insert
+//                                into
+//                        Member (name, id)
+//                        values
+//                                (?, ?)
+//                        Hibernate:
+//                /* insert for
+//                    hellojpa.Member */insert
+//                                into
+//                        Member (name, id)
+//                        values
+//                                (?, ?)
+            /*
+            * member1, member2 두 객체가 영속성컨텍스트에 먼저 저장된뒤
+            * SQL 쿼리 두개가 한번에 날아간다. => 버퍼링 기능 : 최적화가 가능하다
+            * JDBC 배치
+            * */
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
