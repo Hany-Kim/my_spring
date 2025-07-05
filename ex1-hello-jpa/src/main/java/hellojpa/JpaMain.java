@@ -20,20 +20,10 @@ public class JpaMain {
 
         try {
             // 영속
-            Member findMember1 = em.find(Member.class, 101L); // 1번째 조회에서 DB에서 데이터를 가져오고
-            Member findMember2 = em.find(Member.class, 101L); // 2번째는 1차 캐싱에서 데이터를 가져와야 함.
+            Member findMember1 = em.find(Member.class, 101L);
+            Member findMember2 = em.find(Member.class, 101L);
 
-//            Hibernate:
-//                select
-//                    m1_0.id,
-//                    m1_0.name
-//                from
-//                    Member m1_0
-//                where
-//                    m1_0.id=?
-            /*
-            * select 쿼리가 1번만 실행된것을 확인할 수 있다.
-            * */
+            System.out.println("result = " + (findMember1 == findMember2)); // result = true
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
