@@ -19,36 +19,21 @@ public class JpaMain {
         tx.begin();
 
         try {
-            // 비영속 상태 (new / transient)
-            Member member = new Member();
-            member.setId(101L);
-            member.setName("HelloJPA");
+            // 영속
+            Member findMember1 = em.find(Member.class, 101L); // 1번째 조회에서 DB에서 데이터를 가져오고
+            Member findMember2 = em.find(Member.class, 101L); // 2번째는 1차 캐싱에서 데이터를 가져와야 함.
 
-            // 영속 상태 (managed)
-            System.out.println("BEFORE"); // DB에 저장된다면 SQL이 날아감. SQL이 출력되는 시점을 확인
-            em.persist(member); // 엄밀히 말해서 DB에 저장하는 것은 아님
-            System.out.println("AFTER");
-
-            Member findMember = em.find(Member.class, 101L);
-            System.out.println("findMember.id = " + findMember.getId());
-            System.out.println("findMember.name = " + findMember.getName());
-
-//            BEFORE
-//            AFTER
-//            findMember.id = 101
-//            findMember.name = HelloJPA
 //            Hibernate:
-//                /* insert for
-//                    hellojpa.Member */insert
-//                into
-//                    Member (name, id)
-//                values
-//                    (?, ?)
+//                select
+//                    m1_0.id,
+//                    m1_0.name
+//                from
+//                    Member m1_0
+//                where
+//                    m1_0.id=?
             /*
-            위 출력결과를 보면 em.find()가 실행한 뒤 출력 후
-            insert 쿼리가 보내졌다.
-            select 쿼리는 보이지 않는다. -> em.persist()실행 시점에 '1차 캐싱'되어 영속성 컨텍스트에서 데이터를 조회했기 때문
-             */
+            * select 쿼리가 1번만 실행된것을 확인할 수 있다.
+            * */
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
