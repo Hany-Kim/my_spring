@@ -1,6 +1,7 @@
 package hellojpa;
 
 import jakarta.persistence.*;
+import java.util.List;
 
 public class JpaMain {
 
@@ -17,12 +18,13 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member findMember = em.find(Member.class, 1L);
-            System.out.println("findMember.id = " + findMember.getId());
-            System.out.println("findMember.name = " + findMember.getName());
+            List<Member> result = em.createQuery("select m from Member as m", Member.class)
+                    .getResultList();
+            // Member는 테이블에 접근하는 것이 아닌 '객체'에 접근하는 것.
 
-            findMember.setName("HelloJPA");
-            //em.persist(findMember); // 저장하지 않아도된다.
+            for (Member member : result) {
+                System.out.println("member.getName() = " + member.getName());
+            }
 
             tx.commit();
         } catch (Exception e) {
