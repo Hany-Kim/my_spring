@@ -20,32 +20,38 @@ public class JpaMain {
 
         try {
             // 영속
-            Member member1 = new Member(150L, "A");
-            Member member2 = new Member(160L, "B");
+            Member member = em.find(Member.class, 150L);
+            member.setName("ZZZZZ");
 
-            em.persist(member1);
-            em.persist(member2);
-            System.out.println("===================");
-            ===================
-//            Hibernate:
-//                /* insert for
-//                    hellojpa.Member */insert
-//                                into
-//                        Member (name, id)
-//                        values
-//                                (?, ?)
-//                        Hibernate:
-//                /* insert for
-//                    hellojpa.Member */insert
-//                                into
-//                        Member (name, id)
-//                        values
-//                                (?, ?)
+//            em.persist(member);
             /*
-            * member1, member2 두 객체가 영속성컨텍스트에 먼저 저장된뒤
-            * SQL 쿼리 두개가 한번에 날아간다. => 버퍼링 기능 : 최적화가 가능하다
-            * JDBC 배치
-            * */
+            * em.persist(member); 수정 후 DB에 저장하는 로직은 필요하지 않다.
+            *
+            * JPA의 목적은 JAVA Collection처럼 사용하는 것이다.
+            * Collection를 사용할 때도 값을 변경하고 다시 저장하지 않는다.
+            * 그렇기에 오히려 em.persist()를 사용하면 안된다.
+             */
+//            Hibernate:
+//                select
+//                    m1_0.id,
+//                    m1_0.name
+//                from
+//                    Member m1_0
+//                where
+//                    m1_0.id=?
+//            ==================
+//                    Hibernate:
+//            /* update
+//                for hellojpa.Member */update Member
+//                set
+//                    name=?
+//                where
+//                    id=?
+            /*
+            em.persist()없이 update 쿼리가 날아간것을 확인할 수 있다.
+             */
+
+            System.out.println("==================");
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
