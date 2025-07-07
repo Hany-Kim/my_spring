@@ -18,10 +18,12 @@ import java.util.Date;
 public class Member {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     /*
-    * @Id : 직접 id 지정
-    * */
+     * @Id : 직접 id 지정
+     * @GeneratedValue(strategy = GenerationType.AUTO) : DB방언에 따라 자동으로 Id 할당
+     * */
 
     @Column(name = "name")
     private String username;
