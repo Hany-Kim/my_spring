@@ -19,59 +19,30 @@ public class JpaMain {
         tx.begin();
 
         try {
-            // 영속
-            Member member = new Member(200L, "member200");
-            em.persist(member);
-
-            em.flush(); // .commit() 이전에 미리 DB에 반영하고 싶을 때
             /*
-            * 플러시의 동작순서
-            * 1. 더티 체킹 (변경 감지)
-            * 2. 수정된 엔티티 쓰기 지연 SQL 저장소에 등록
-            * 3. 쓰기 지연 SQL 저장소의 쿼리를 DB에 전송
+            * 준영속 상태로 만드는 방법
+            * - em.detach(entity) : 특정 엔티티만 준영속 상태로 전환
+            * - em.clear() : 영속성 컨텍스트를 완전히 초기화
+            * - em.close() : 영속성 컨텍스트를 종료
             * */
 
+            // 영속
+            Member member = em.find(Member.class, 150L); // -> 가져오면 영속상태가 된다.
+            member.setName("AAAAA"); // 값이 변경되면 '더티 체킹'이 된다.
+
+            em.detach(member); // 준영속상태로 전환 -> DB를 확인하면 데이터가 변경되지 않게 된다.
 //            Hibernate:
-//                /* insert for
-//                    hellojpa.Member */insert
-//                into
-//                    Member (name, id)
-//                values
-//                    (?, ?)
-//            ==================
+//                select
+//                    m1_0.id,
+//                    m1_0.name
+//                from
+//                    Member m1_0
+//                where
+//                    m1_0.id=?
+//            ===================
             /*
-            .commit() 이전에 SQL쿼리가 날아간 것을 확인할 수 있다.
-             */
-
-            /*
-            플러시 하는 방법
-            1. em.flush() 직접호출
-            2. tx.commit() 트랜잭션 커밋 - 플러시 자동 호출
-            3. JPQL 쿼리 실행 - 플러시 자동 호출
-                em.persit(memberA);
-                em.persit(memberB);
-                em.persit(memberC);
-
-                // 중간에 JPQL 실행
-                query = em.createQuery("select m from Member m", Member.class);
-                // JPQL 사용시 자동으로 flush가 호출되지 않으면
-                // em.createQuery()의 결과를 가져올 수 없다. -> 아무 데이터도 없기 때문에
-                // 그래서 JPQL 실행시점에 flush가 되어 이전에 작업한 데이터를 반영하고
-                // JPQL 쿼리가 실행되어 결과적으로 Data를 가져올 수 있게된다.
-             */
-
-            /*
-            플러시 모드 옵션
-            em.setFlushMode(FlushModeType.COMMIT);
-            - FlushModeType.AUTO : 커밋이나 쿼리를 실행할 때 플러시 (기본값)
-            - FlushModeType.COMMIT : 커밋할 때만 플러시
-             */
-
-            /*
-            * 플러시
-            * - 영속성 컨텍스트를 비우지 않음
-            * - 영속성 컨텍스트의 변경 내용을 DB에 동기화
-            * - 트랜잭션이라는 작업 단위가 중요 -> 커밋 직전에만 동기화
+            * select 쿼리만 전송되고
+            * update 쿼리는 생기지 않았음을 확인할 수 있다.
             * */
 
             System.out.println("==================");
