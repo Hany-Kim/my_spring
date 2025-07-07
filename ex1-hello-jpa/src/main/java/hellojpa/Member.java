@@ -15,15 +15,19 @@ import jakarta.persistence.Transient;
 import java.util.Date;
 
 @Entity
+@SequenceGenerator(
+        name = "member_seq_generator",
+        sequenceName = "member_seq")
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "member_seq_generator")
     private Long id;
     /*
      * @Id : 직접 id 지정
      * @GeneratedValue(strategy = GenerationType.AUTO) : DB방언에 따라 자동으로 Id 할당
      * @GeneratedValue(strategy = GenerationType.IDENTITY) : AUTO_INCREMENT, em.persist()시점에 즉시 INSERT SQL실행하고 식별자 ID 조회. 그전 까지 ID 모름
+     * @GeneratedValue(strategy = GenerationType.SEQUENCE) : 주로 Oracle에서 사용. Sequence 오브젝트를 생성한 뒤 Sequence 오브젝트에서 ID값을 조회해 INSERT SQL 실행. Sequence 오브젝트에서 ID 관리
      * */
 
     @Column(name = "name")
