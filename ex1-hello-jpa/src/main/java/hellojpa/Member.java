@@ -18,11 +18,12 @@ import java.util.Date;
 public class Member {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     /*
      * @Id : 직접 id 지정
      * @GeneratedValue(strategy = GenerationType.AUTO) : DB방언에 따라 자동으로 Id 할당
+     * @GeneratedValue(strategy = GenerationType.IDENTITY) : AUTO_INCREMENT, em.persist()시점에 즉시 INSERT SQL실행하고 식별자 ID 조회. 그전 까지 ID 모름
      * */
 
     @Column(name = "name")
