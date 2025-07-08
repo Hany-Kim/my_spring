@@ -41,8 +41,10 @@ public class JpaMain {
 
             // Member의 팀 소속을 알고자 할때.
             Member findMember = em.find(Member.class, member.getId());
-            Team findTeam = findMember.getTeam();
-            System.out.println("findTeam = " + findTeam.getName());
+            List<Member> members = findMember.getTeam().getMembers(); // 양방향 연관관계. Member -> Team -> Member로 조회하고 있다.
+            for (Member m : members) {
+                System.out.println("m = " + m.getUsername());
+            }
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
