@@ -50,8 +50,14 @@ public class Member {
         return team;
     }
 
-    public void setTeam(Team team) {
+    public void changeTeam(Team team) {
+        /*
+        * 연관관계 편의 메서드를 작성할 때,
+        * getter, setter 관례와 충돌할 수 있기 때문에
+        * 별도의 메서드명으로 작성하자.
+        * */
         this.team = team;
+        team.getMembers().add(this); // 나 자신 인스턴스를 추가
     }
 
     public String getUsername() {

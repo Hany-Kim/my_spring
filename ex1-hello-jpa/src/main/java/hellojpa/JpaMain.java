@@ -39,10 +39,20 @@ public class JpaMain {
 
             Member member = new Member();
             member.setUsername("member1");
-            member.setTeam(team);
+            member.changeTeam(team); // member.setTeam(team);
             em.persist(member);
 
-            team.getMembers().add(member); // 추가
+            /*
+            * tip)
+            * member.setTeam(team);
+            * team.getMembers().add(member); // 추가
+            *
+            * 항상 양방향 값을 설정하다보면 사람이기에 실수할 수 있음.
+            * '연관관계 편의 메서드'를 작성해 실수를 줄이자.
+            *
+            * new Member()를 세팅하는 시점에 team.getMembers().add(member)를 반영
+            *
+            * */
             /*
             * team.getMembers().add(member); // 추가
             * 컬렉션 값을 설정하지 않으면, == 역방향 관계를 설정하지 않으면
