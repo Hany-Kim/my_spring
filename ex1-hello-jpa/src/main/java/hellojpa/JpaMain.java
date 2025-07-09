@@ -89,7 +89,7 @@ public class JpaMain {
             List<Member> members = findTeam.getMembers();
 
             System.out.println("=============================");
-            System.out.println("members = " + findTeam); // Exception in thread "main" java.lang.StackOverflowError
+//            System.out.println("members = " + findTeam); // Exception in thread "main" java.lang.StackOverflowError
             /*
             * member도 .toString()을 호출하고
             * team도 .toString()을 호출했다.
