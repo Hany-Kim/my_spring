@@ -70,4 +70,13 @@ public class Team {
         member.setTeam(this);
         members.add(member);
     }
+
+    @Override
+    public String toString() {
+        return "Team{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", members=" + members + // members에서도 members.toString()이 호출된다.
+                '}';
+    }
 }

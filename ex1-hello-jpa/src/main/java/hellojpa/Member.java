@@ -71,4 +71,13 @@ public class Member {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", team=" + team + // team에서도 team.toString()을 호출한다.
+                '}';
+    }
 }

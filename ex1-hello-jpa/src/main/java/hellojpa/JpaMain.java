@@ -88,9 +88,22 @@ public class JpaMain {
             Team findTeam = em.find(Team.class, team.getId()); // 1차 캐시에 들어가 있다.
             List<Member> members = findTeam.getMembers();
 
-            for (Member m : members) {
-                System.out.println("m = " + m.getUsername());
-            }
+            System.out.println("=============================");
+            System.out.println("members = " + findTeam); // Exception in thread "main" java.lang.StackOverflowError
+            /*
+            * member도 .toString()을 호출하고
+            * team도 .toString()을 호출했다.
+            *
+            * member에 있던 team도 .toString()을 쓰고
+            * team에 있던 member도 .toString()을 쓴다.
+            *
+            * 무한루프에 걸렸다.
+            *
+            * lombok에서 toString()을 왠만하면 사용하지 않아야 한다.
+            * JSON 생성 라이브러리를 사용할 때는 Entity를 Dto로 변환해서 사용해야 한다. -> 대부분의 문제가 해결된다.
+            * Entity만 사용하면 Entity스펙이 변경될 때, API 스펙이 변경된다.
+            * */
+            System.out.println("=============================");
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
