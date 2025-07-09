@@ -20,30 +20,40 @@ public class JpaMain {
 
         try {
             // 저장
-            Team team = new Team();
-            team.setName("TeamA");
-            em.persist(team);
-
-            Member member = new Member();
-            member.setUsername("member1");
-            member.setTeam(team); // 연관관계의 주인은 team이다.
-            em.persist(member);
-
-            team.getMembers().add(member); // 어차피 읽기 전용이라 JPA에서 업데이트할 때 사용하지 않는다.
             /*
-            Member member = new Member();
-            member.setUsername("member1");
-            em.persist(member);
-
-            Team team = new Team();
+            * JPA 관점에서는 연관관계의 주인의 값만 설정해도 된다.
+            * Team team = new Team();
             team.setName("TeamA");
-            team.getMembers().add(member); // mappedBy라서 읽기 전용이다. 역방향(주인이 아닌 방향)만 연관관계가 설정됨.
             em.persist(team);
 
-            * DB를 확인하면 MEMBER테이블의 TEAM_ID가 null이다.
-            * 현재 연관관계의 주인은 Member클래스의 team이다.
-            * team.getMembers().add(member); // mappedBy라서 읽기 전용이다.
-            * JPA에서 insert, update할때는 .add하지 않는다.
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setTeam(team);
+            em.persist(member);
+            * */
+
+            // 객체지향 관점에서는 연관관계의 주인뿐만 아니라 역방향도 값을 설정해줘야 한다.
+            Team team = new Team();
+            team.setName("TeamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setTeam(team);
+            em.persist(member);
+
+            team.getMembers().add(member); // 추가
+            /*
+            * team.getMembers().add(member); // 추가
+            * 컬렉션 값을 설정하지 않으면, == 역방향 관계를 설정하지 않으면
+            * 영속성 컨텍스트를 flush(), clear()할때는 이후 Select 쿼리가 추가로 날아가
+            * Team에 속한 Member (Team -> Member) 방향으로 조회가 가능하지만
+            *
+            * flust(), clear()를 하지 않으면, 이후 Select 쿼리가 날아가지 않고
+            * Insert 쿼리가 날아갈때 1차캐시에 있던 값으로 조회하기 때문에
+            * Team에 속한 Member (Team -> Member) 방향으로 조회가 불가능
+            *
+            * 항상 양방향으로 값을 설정해야 한다. -> 중요
             * */
 
             /*
@@ -53,10 +63,10 @@ public class JpaMain {
             * em.flush();
             * em.clear();
             * 를 추가하면된다. */
-            em.flush();
-            em.clear();
+            /*em.flush();
+            em.clear();*/
 
-            Team findTeam = em.find(Team.class, team.getId());
+            Team findTeam = em.find(Team.class, team.getId()); // 1차 캐시에 들어가 있다.
             List<Member> members = findTeam.getMembers();
 
             for (Member m : members) {
