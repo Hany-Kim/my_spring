@@ -39,8 +39,10 @@ public class JpaMain {
 
             Member member = new Member();
             member.setUsername("member1");
-            member.changeTeam(team); // member.setTeam(team);
+//            member.changeTeam(team); // member.setTeam(team); Member기준으로 Team을 넣을때
             em.persist(member);
+
+            team.addMember(member); // Team기준으로 Member를 넣을 때
 
             /*
             * tip)
@@ -52,6 +54,13 @@ public class JpaMain {
             *
             * new Member()를 세팅하는 시점에 team.getMembers().add(member)를 반영
             *
+            * ----
+            *
+            * 반대 방향을 기준으로 연관관계 편의 메서드를 작성할 수도 있다.
+            * team.addMember(member);
+            * 단, 이전에 작성한 연관관계 편의 메서드를 없애줘야 한다.
+            * 최악의 경우 무한루프에 걸릴 수 있다.
+            * 둘 중 하나만 선택하자.
             * */
             /*
             * team.getMembers().add(member); // 추가

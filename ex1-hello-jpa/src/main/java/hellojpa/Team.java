@@ -62,4 +62,12 @@ public class Team {
     public void setMembers(List<Member> members) {
         this.members = members;
     }
+
+    public void addMember(Member member) {
+        /*
+        * 연관관계 편의 메서드2
+        * */
+        member.setTeam(this);
+        members.add(member);
+    }
 }

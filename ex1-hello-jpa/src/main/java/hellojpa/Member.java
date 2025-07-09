@@ -50,6 +50,10 @@ public class Member {
         return team;
     }
 
+    public void setTeam(Team team) {
+        this.team = team;
+    }
+
     public void changeTeam(Team team) {
         /*
         * 연관관계 편의 메서드를 작성할 때,
