@@ -28,6 +28,8 @@ public class JpaMain {
             member.setUsername("member1");
             member.setTeam(team); // 연관관계의 주인은 team이다.
             em.persist(member);
+
+            team.getMembers().add(member); // 어차피 읽기 전용이라 JPA에서 업데이트할 때 사용하지 않는다.
             /*
             Member member = new Member();
             member.setUsername("member1");
@@ -35,7 +37,7 @@ public class JpaMain {
 
             Team team = new Team();
             team.setName("TeamA");
-            team.getMembers().add(member); // mappedBy라서 읽기 전용이다.
+            team.getMembers().add(member); // mappedBy라서 읽기 전용이다. 역방향(주인이 아닌 방향)만 연관관계가 설정됨.
             em.persist(team);
 
             * DB를 확인하면 MEMBER테이블의 TEAM_ID가 null이다.
