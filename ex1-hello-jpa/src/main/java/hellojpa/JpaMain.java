@@ -26,8 +26,23 @@ public class JpaMain {
 
             Member member = new Member();
             member.setUsername("member1");
-            member.setTeam(team);
+            member.setTeam(team); // 연관관계의 주인은 team이다.
             em.persist(member);
+            /*
+            Member member = new Member();
+            member.setUsername("member1");
+            em.persist(member);
+
+            Team team = new Team();
+            team.setName("TeamA");
+            team.getMembers().add(member); // mappedBy라서 읽기 전용이다.
+            em.persist(team);
+
+            * DB를 확인하면 MEMBER테이블의 TEAM_ID가 null이다.
+            * 현재 연관관계의 주인은 Member클래스의 team이다.
+            * team.getMembers().add(member); // mappedBy라서 읽기 전용이다.
+            * JPA에서 insert, update할때는 .add하지 않는다.
+            * */
 
             /*
             * Member와 Team은 영속상태이기에 1차 캐시에서 조회하기 때문에
@@ -39,9 +54,9 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            // Member의 팀 소속을 알고자 할때.
-            Member findMember = em.find(Member.class, member.getId());
-            List<Member> members = findMember.getTeam().getMembers(); // 양방향 연관관계. Member -> Team -> Member로 조회하고 있다.
+            Team findTeam = em.find(Team.class, team.getId());
+            List<Member> members = findTeam.getMembers();
+
             for (Member m : members) {
                 System.out.println("m = " + m.getUsername());
             }
