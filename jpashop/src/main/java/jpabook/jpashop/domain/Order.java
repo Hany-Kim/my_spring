@@ -6,8 +6,13 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /*
 * 테이블 명이 ORDER일 경우, 예약어인 Order By 때문에
@@ -22,17 +27,12 @@ public class Order {
     @Column(name = "ORDER_ID")
     private Long id;
 
-    @Column(name = "MEMBER_ID")
-    private Long memberId;
-    /*
-    * 데이터 중심 설계의 문제점
-    * - 현재 방식은 객체 설계를 테이블 설계에 맞춘 방식
-    * - 테이블의 외래키를 객체에 그대로 가져옴
-    * - 객체 그래프 탐색이 불가능
-    * - 참조가 없으므로 UML도 잘못됨
-    *
-    * private Member member; -> 객체 중심 설계
-    * */
+    @ManyToOne
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate;
 
@@ -47,12 +47,12 @@ public class Order {
         this.id = id;
     }
 
-    public Long getMemberId() {
-        return memberId;
+    public Member getMember() {
+        return member;
     }
 
-    public void setMemberId(Long memberId) {
-        this.memberId = memberId;
+    public void setMember(Member member) {
+        this.member = member;
     }
 
     public LocalDateTime getOrderDate() {
@@ -69,5 +69,11 @@ public class Order {
 
     public void setStatus(OrderStatus status) {
         this.status = status;
+    }
+
+    public void addOrderItem(OrderItem orderItem) {
+        // 연관관계 편의 메서드
+        orderItems.add(orderItem);
+        orderItem.setOrder(this);
     }
 }
