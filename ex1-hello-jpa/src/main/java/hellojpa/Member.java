@@ -27,12 +27,6 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
-//    @Column(name = "TEAM_ID")
-//    private Long teamId;
-    @ManyToOne
-    @JoinColumn(name = "TEAM_ID")
-    private Team team;
-
     public Member() {
 //    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
 //    따라서 기본 생성자가 필요하다.
@@ -46,38 +40,11 @@ public class Member {
         this.id = id;
     }
 
-    public Team getTeam() {
-        return team;
-    }
-
-    public void setTeam(Team team) {
-        this.team = team;
-    }
-
-    public void changeTeam(Team team) {
-        /*
-        * 연관관계 편의 메서드를 작성할 때,
-        * getter, setter 관례와 충돌할 수 있기 때문에
-        * 별도의 메서드명으로 작성하자.
-        * */
-        this.team = team;
-        team.getMembers().add(this); // 나 자신 인스턴스를 추가
-    }
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", team=" + team + // team에서도 team.toString()을 호출한다.
-                '}';
     }
 }
