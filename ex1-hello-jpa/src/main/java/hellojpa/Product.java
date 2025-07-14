@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +17,8 @@ public class Product {
 
     private String name;
 
-    @ManyToMany(mappedBy = "products")
-    private List<Member> members = new ArrayList<>();
+    @OneToMany(mappedBy = "product")
+    private List<MemberProduct> memberProducts = new ArrayList<>();
 
     public Long getId() {
         return id;
