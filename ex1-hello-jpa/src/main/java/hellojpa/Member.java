@@ -44,6 +44,12 @@ public class Member {
     @ManyToMany
     @JoinTable(name = "MEMBER_PRODUCT")
     private List<Product> products = new ArrayList<>();
+    /*
+    * 다:다 관계는 실무에서 사용하기 어렵다.
+    *
+    * - 매핑 정보(FK)이외에 다른 column(데이터)을 추가하기 어렵다.(created_at, updated_at, ...)
+    * - 쿼리가 이상하게 날아간다. (예측하지 못한 쿼리가 나간다.)
+    * */
 
     public Member() {
 //    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
