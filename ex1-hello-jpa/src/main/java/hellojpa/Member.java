@@ -27,6 +27,10 @@ public class Member {
     @Column(name = "USERNAME")
     private String username;
 
+    @ManyToOne
+    @JoinColumn(name = "TEAM_ID", insertable = false, updatable = false) // 읽기전용과 동일
+    private Team team;
+
     public Member() {
 //    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
 //    따라서 기본 생성자가 필요하다.
