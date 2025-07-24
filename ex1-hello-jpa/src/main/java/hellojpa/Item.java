@@ -9,11 +9,10 @@ import jakarta.persistence.Inheritance;
 import jakarta.persistence.InheritanceType;
 
 @Entity
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn
-public class Item {
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+public abstract class Item {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy = GenerationType.TABLE)
     private Long id;
 
     private String name;
@@ -77,5 +76,35 @@ public class Item {
         primary key (id)
     )
     *
+    * */
+
+    /*
+    * TABLE_PER_CLASS 전략을 사용하면
+    * 슈퍼타입 테이블(추상 테이블(Item))을 두지 않고, 각 서브타입(Entity)에 공통 Column을 각각 추가하여 관리
+    * Item 테이블은 생기지 않는다.
+    *
+    * create table Album (
+        price integer not null,
+        id bigint not null,
+        artist varchar(255),
+        name varchar(255),
+        primary key (id)
+    )
+    * create table Book (
+        price integer not null,
+        id bigint not null,
+        author varchar(255),
+        isbn varchar(255),
+        name varchar(255),
+        primary key (id)
+    )
+    * create table Movie (
+        price integer not null,
+        id bigint not null,
+        actor varchar(255),
+        director varchar(255),
+        name varchar(255),
+        primary key (id)
+    )
     * */
 }
