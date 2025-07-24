@@ -19,26 +19,50 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setUsername("member1");
-            em.persist(member);
+            Movie movie = new Movie();
+            movie.setDirector("aaaa");
+            movie.setActor("bbbb");
+            movie.setName("바람과함께사라지다");
+            movie.setPrice(10000);
 
-            Team team = new Team();
-            team.setName("teamA");
-
-            team.getMembers().add(member);
             /*
-            * 1:다 단방향시에는 insert쿼리 2번 + update 쿼리 1번 수행
-            * member -> insert 쿼리
-            * team -> insert 쿼리
-            * team.getMembers().add(member) -> update 쿼리
+            * insert 쿼리가 Item과 Movie에 날아가는 것을 확인할 수 있음
+            *  insert
+            into
+                Item (name, price, id)
+            values
+                (?, ?, default)
             *
-            * 다:1 단방향에서는 insert쿼리 2번으로 동일한 작업을 수행함
-            *
-            * 결론적으로 다:1관계가 성능과 유지관리 측면에서 효율적이다..
+            *  insert 
+            into
+                Movie (actor, director, id) 
+            values
+                (?, ?, ?)
             * */
 
-            em.persist(team);
+            em.persist(movie);
+
+            em.flush();
+            em.clear();
+
+            Movie findMovie = em.find(Movie.class, movie.getId());
+            System.out.println("findMovie = " + findMovie);
+
+            /*
+            * select
+                m1_0.id,
+                m1_1.name,
+                m1_1.price,
+                m1_0.actor,
+                m1_0.director
+            from
+                Movie m1_0
+            join
+                Item m1_1
+                    on m1_0.id=m1_1.id
+            where
+                m1_0.id=?
+            * */
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
