@@ -51,6 +51,13 @@ public class Member extends BaseEntity {
     *   -> LAZY로 일일히 발라줘야한다.
     * - @OneToMany, @ManyToMany는 기본이 지연 로딩
     * */
+    /*
+    * 지연로딩 활용 - 실무
+    * - 모든 연관관계에 지연로딩을 사용해라.
+    * - 실무에서 즉시 로딩을 사용하지 마라
+    * - JPQL fetch 조인이나, 엔티티 그래프 기능을 사용해라
+    * - 즉시 로딩은 상상하지 못한 쿼리가 나간다.
+    * */
 
     public Member() {
 //    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
