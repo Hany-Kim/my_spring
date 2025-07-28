@@ -1,9 +1,6 @@
 package hellojpa;
 
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
-import java.util.List;
-import jdk.swing.interop.LightweightFrameWrapper;
 
 public class JpaMain {
 
@@ -20,15 +17,11 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Member member = new Member();
-            member.setUsername("user1");
-            member.setCreatedBy("kim");
-            member.setCreatedDate(LocalDateTime.now());
-
-            em.persist(member);
-
-            em.flush();
-            em.clear();
+            Member member = em.find(Member.class, 1L);
+//            printMemberAndTeam(member); // em.find(Member.class, 1L)에서 쿼리가 날아갈때 Member와 Team을 "한번에" 찾아오면 원하는 출력을 할 수 있다.
+            printMember(member); // em.find(Member.class, 1L)에서 쿼리가 날아갈때 Member와 Team을 "한번에" 찾아오면 Team을 찾을 필요는 없기 때문에 손해다.
+            /*
+            * JPA에서는 프록시와 지연로딩을 통해 위와 같은 상황의 문제를 해결한다.*/
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
@@ -38,5 +31,18 @@ public class JpaMain {
         }
 
         emf.close();
+    }
+
+    private static void printMember(Member member) {
+        System.out.println("member = " + member.getUsername());
+    }
+
+    private static void printMemberAndTeam(Member member) {
+        /*Member랑 Team을 출력하는 메서드*/
+        String username = member.getUsername();
+        System.out.println("username = " + username);
+
+        Team team = member.getTeam();
+        System.out.println("team = " + team.getName());
     }
 }
