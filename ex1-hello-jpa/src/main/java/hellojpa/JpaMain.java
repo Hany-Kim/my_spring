@@ -41,7 +41,7 @@ public class JpaMain {
 
 //            Member m = em.find(Member.class, member2.getId());
 
-            List<Member> members = em.createQuery("select m from Member m", Member.class)
+            List<Member> members = em.createQuery("select m from Member m join fetch m.team", Member.class)
                     .getResultList();
             /*
             * fetch = FetchType.EAGER (즉시로딩)으로 설정되어 있는데,
