@@ -1,6 +1,7 @@
 package hellojpa;
 
 import jakarta.persistence.*;
+import org.hibernate.Hibernate;
 
 public class JpaMain {
 
@@ -53,6 +54,15 @@ public class JpaMain {
             * 3. 영속성 컨텍스트에 값이 없다면 DB 조회를 한다.
             * 4. DB조회를 통해 실제 Entity를 생성한다.
             * */
+            /*
+            * 프록시 확인
+            * - 프록시 인스턴스의 초기화 여부 확인
+            *   PersistenceUnitUtil().isLoaded(Object entity)
+            * - 프록시 클래스 확인 방법
+            *   entity.getClass().getName() 출력(..javasist.. or HibernateProxy...)
+            * - 프록시 강제 초기화
+            * - 참고: JPA 표준은 강제 초기화 없음. 강제 호출 해야한다.
+            *   강제호출 : ex) member.getName()*/
 
             Member member1 = new Member();
             member1.setUsername("member1");
@@ -62,29 +72,18 @@ public class JpaMain {
             em.clear();
 
             Member refMember = em.getReference(Member.class, member1.getId());
-            System.out.println("refMember = " + refMember.getClass()); // Proxy
+            // 프록시 클래스 확인 방법
+            System.out.println("refMember = " + refMember.getClass()); // refMember = class hellojpa.Member$HibernateProxy$vKiaqJ7g
 
-            /*
-            // case. 1
-            // 조회 쿼리를 DB에 날려 refMember.getUsername()를 조회한다.
-            refMember.getUsername();
-             */
+            // 프록시 인스턴스의 초기화 여부 확인
+            // 초기화 전
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // isLoaded = false
+            // 초기화 후
+            refMember.getUsername(); // 이것도 강제 초기화 한셈
+            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // isLoaded = true
 
-            /*
-            // case. 2
-            em.detach(refMember);
-
-            refMember.getUsername();
-            System.out.println("refMember = " + refMember.getClass()); // refMember = class hellojpa.Member$HibernateProxy$TarPAodo
-            // 예외 발생 -> org.hibernate.LazyInitializationException
-             */
-
-            // case. 3
-            em.clear(); // 영속성 컨텍스트를 꺼버림
-
-            refMember.getUsername();
-            System.out.println("refMember = " + refMember.getClass()); // refMember = class hellojpa.Member$HibernateProxy$TarPAodo
-            // 예외 발생 -> org.hibernate.LazyInitializationException
+            // 프록시 강제 초기화
+            Hibernate.initialize(refMember); // 강제 초기화
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
