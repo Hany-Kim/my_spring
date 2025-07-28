@@ -18,7 +18,7 @@ public class Parent {
 
     private String name;
 
-    @OneToMany(mappedBy = "parent", orphanRemoval = true)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     private List<Child> childList = new ArrayList<>();
     /*
     * 영속성 전이: CASCADE - 주의
