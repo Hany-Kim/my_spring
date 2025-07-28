@@ -18,7 +18,7 @@ public class Parent {
 
     private String name;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", orphanRemoval = true)
     private List<Child> childList = new ArrayList<>();
     /*
     * 영속성 전이: CASCADE - 주의
@@ -35,6 +35,18 @@ public class Parent {
     * - MERGE : 병합
     * - REFRESH : REFRESH
     * - DETACH : DETACH
+    * */
+    /*
+    * orphanRemoval = true
+    * 고아객체 제거: 부모 엔티티와 연관관계가 끊어진 자식 엔티티를 자동으로 삭제
+    *
+    * 고아 객체 - 주의
+    * - 참조가 제거된 엔티티는 다른 곳에서 참조하지 않는 고아객체로 보고 삭제하는 기능
+    * - 참조하는 곳이 하나일 때 사용해야함!
+    * - 특정 엔티티가 개인 소유할 때 사용
+    * - @OneToOne, @OneToMany만 가능
+    * - 참고: 개념적으로 부모를 제거하면 자식은 고아가 된다. 따라서 고아 객체 제거 기능을 활성화하면,
+    *   부모를 제거할 때 자식도 함께 제거된다. 이것은 CasecadeType.REMOVE처럼 작동한다.
     * */
 
     public void addChild(Child child) {
@@ -56,5 +68,13 @@ public class Parent {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public List<Child> getChildList() {
+        return childList;
+    }
+
+    public void setChildList(List<Child> childList) {
+        this.childList = childList;
     }
 }
