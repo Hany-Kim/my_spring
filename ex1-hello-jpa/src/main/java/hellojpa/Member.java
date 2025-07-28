@@ -41,6 +41,13 @@ public class Member extends BaseEntity {
     private Team team;
     // (fetch = FetchType.LAZY)를 사용하면 Team객체를 프록시 객체로 반환한다. = Member객체만 DB에서 조회한다.
     // (fetch = FetchType.EAGER)를 사용하면 Member객체와 Team객체를 DB에서 함께조회한다.
+    /*
+    * 프록시와 즉시로딩 주의
+    * - 가급적 지연 로딩만 사용(특히 실무에서)
+    * - 즉시로딩을 사용하면 전혀 예상치못한 SQL이 발생
+    *   연관관계 매핑되어 있는 객체가 많을 수록 JOIN되어야 하는 양이 커진다.
+    * - 즉시로딩은 JPQL에서 N+1 문제를 일으킨다.
+    * */
 
     public Member() {
 //    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
