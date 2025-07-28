@@ -37,6 +37,7 @@ public class JpaMain {
             *   초기화되면 프록시 객체를 통해서 실제 엔티티에 접근이 가능한 것임
             * - 프록시 객체는 원본 엔티티를 상속받는다. 따라서 타입체크에 유의
             *   (원본 엔티티와 프록시 객체 비교시, ==은 비교 실패한다. instance of를 사용해야한다.)
+            * - 영속성 컨텍스트에 찾는 엔티티가 이미 있으면 em.getReference()를 호출해도 실제 엔티티가 반환된다.
             * */
             /*
             * 프록시 객체의 초기화
@@ -62,31 +63,66 @@ public class JpaMain {
             em.flush();
             em.clear();
 
+            Member m2 = em.getReference(Member.class, member1.getId());
+            Member m3 = em.getReference(Member.class, member1.getId());
+            System.out.println("m2: " + m2.getClass());
+            System.out.println("m3: " + m3.getClass());
+            System.out.println("m2 == m3: " + (m2.getClass() == m3.getClass()));
             /*
-            Member m1 = em.find(Member.class, member1.getId());
-            Member m2 = em.find(Member.class, member2.getId());
+            * m2: class hellojpa.Member$HibernateProxy$0heI9Bbe
+            * m3: class hellojpa.Member$HibernateProxy$0heI9Bbe
+            *
+            * m2 == m3: true 같은 프록시 객체가 비교된다.
+            * */
 
-            System.out.println("m1 == m2: " + (m1.getClass() == m2.getClass()));
-            // m1 == m2: true
-            */
+            // --------------------------------
+
+            Member m1 = em.find(Member.class, member1.getId()); // 영속성 상태에 올라감
+            System.out.println("m1 == " + m1.getClass());
+
+            Member reference = em.getReference(Member.class, member1.getId());
+            System.out.println("reference = " + reference.getClass());
 
             /*
+            * JPA에서는 같은 트랜잭션 내에서 비교연산자 == 사용시 같다라고 나와야한다.
+            * */
 
-            Member m1 = em.find(Member.class, member1.getId());
-            Member m2 = em.getReference(Member.class, member2.getId());
+            /*
+            * m1 == class hellojpa.Member
+            * reference = class hellojpa.Member
+            *
+            * reference가 프록시 객체가 아닌 원본(Member)객체가 출력되는 것을 알수 있다.
+            *
+            * 이미 Member를 영속성컨텍스트 올려놨는데(1차캐시) 굳이 프록시 객체를 반환하는 것보다
+            * 원본 객체를 반환하는 것이 성능 최적화면에서 좋다.
+            *
+            * 또한 JPA에서는 System.out.println("a == a: " + (m1 == reference));는 항상 true가 나와야한다.
+            * JPA에서는 m1이 프록시든 원본이든 상관없이 ==비교가 한 영속성컨텍스트에서 가져온 것이고 PK가 똑같으면 항상 true를 반환해야한다.
+            * */
+            System.out.println("a == a: " + (m1 == reference));
 
-            System.out.println("m1 == m2: " + (m1.getClass() == m2.getClass()));
-            // m1 == m2: false
-            // 실제는 메서드화하여 m1,m2를 파라미터로 받기 때문에 둘다 클래스 타입으 Member로 받게 된다면
-            // 파라미터에 담긴 값이 프록시 객체일때, 구분하기 어려워 진다.
-            // instanceof를 사용해야 한다.
-            */
+            // --------------------------------
 
-            Member m1 = em.find(Member.class, member1.getId());
-            Member m2 = em.getReference(Member.class, member2.getId());
+            Member refMember = em.getReference(Member.class, member1.getId());
+            System.out.println("refMember = " + refMember.getClass());
 
-            System.out.println("m1 == Member: " + (m1 instanceof Member));
-            System.out.println("m2 == Member: " + (m2 instanceof Member));
+            Member findMember = em.find(Member.class, member1.getId()); // 영속성 상태에 올라감
+            System.out.println("findMember = " + findMember.getClass());
+
+            System.out.println("refMember == findMember: " + (refMember.getClass() == findMember.getClass()));
+            /*
+             * refMember = class hellojpa.Member$HibernateProxy$ZWiCpflg
+             * findMember = class hellojpa.Member$HibernateProxy$ZWiCpflg
+             * refMember == findMember: true
+             *
+             *  refMember와 findMember가 모두 프록시 객체가 나온다.
+             *
+             * proxy가 한번 조회되면 em.find에서 proxy객체를 그냥 반환한다.
+             * 그래야 JPA == 비교 연산자를 맞출 수 있다.
+             *
+             * 그렇기에 프록시가 나오든 실제 엔티티가 나오든 문제없도록 개발해야 한다.
+             * */
+
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
