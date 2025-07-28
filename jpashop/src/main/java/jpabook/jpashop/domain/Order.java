@@ -1,7 +1,9 @@
 package jpabook.jpashop.domain;
 
+import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.FetchType.LAZY;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -35,11 +37,11 @@ public class Order extends BaseEntity {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    @OneToOne(fetch = LAZY)
+    @OneToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "DELIVERY_ID")
     private Delivery delivery;
 
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "order", cascade = ALL)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     private LocalDateTime orderDate;
