@@ -18,7 +18,7 @@ public class Parent {
 
     private String name;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Child> childList = new ArrayList<>();
     /*
     * 영속성 전이: CASCADE - 주의
@@ -47,6 +47,13 @@ public class Parent {
     * - @OneToOne, @OneToMany만 가능
     * - 참고: 개념적으로 부모를 제거하면 자식은 고아가 된다. 따라서 고아 객체 제거 기능을 활성화하면,
     *   부모를 제거할 때 자식도 함께 제거된다. 이것은 CasecadeType.REMOVE처럼 작동한다.
+    * */
+    /*
+    * 영속성 전이 + 고아 객체, 생명주기
+    * - CascadeType.ALL + orphanRemoval = true
+    * - 스스로 생명주기를 관리하는 엔티티는 em.persist()로 영속화, em.remove()로 제거
+    * - 두 옵션을 모두 활성화 하면 부모 엔티티를 통해서 자식 엔티티를 관리할 수 있음.
+    * - 도메인 주도 설계(DDD)의 Aggregate Root개념을 구현할 때 유용
     * */
 
     public void addChild(Child child) {
