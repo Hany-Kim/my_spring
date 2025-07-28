@@ -32,43 +32,39 @@ public class JpaMain {
 
             Member m = em.find(Member.class, member1.getId());
             /*
-            * Member객체만 조회하는 쿼리가 DB에 날아간것을 확인할 수 있음
+            * Member객체와 Team객체를 함께 조회하는 쿼리가 DB에 날아간것을 확인할 수 있음
             * select
                 m1_0.MEMBER_ID,
                 m1_0.createdBy,
                 m1_0.createdDate,
                 m1_0.lastModifiedBy,
                 m1_0.lastModifiedDate,
-                m1_0.TEAM_ID,
+                t1_0.TEAM_ID,
+                t1_0.createdBy,
+                t1_0.createdDate,
+                t1_0.lastModifiedBy,
+                t1_0.lastModifiedDate,
+                t1_0.name,
                 m1_0.USERNAME
             from
                 Member m1_0
+            left join
+                Team t1_0
+                    on t1_0.TEAM_ID=m1_0.team_TEAM_ID
             where
                 m1_0.MEMBER_ID=?
             * */
 
-            System.out.println("m = " + m.getTeam().getClass()); // m = class hellojpa.Team$HibernateProxy$OtB6T72W
-            // Team객체는 프록시객체가 반환됨.
+            System.out.println("m = " + m.getTeam().getClass()); // m = class hellojpa.Team
+            // Team객체는 진짜 entity가 반환됨.
 
             System.out.println("====================");
             m.getTeam().getName();
             System.out.println("====================");
             /*
-            * 프록시 객체를 초기화하는 시점(= 프록시 객체를 조회하는 시점(m.getTeam().getName()))에
-            * Team객체를 조회하는 쿼리가 DB에 전달됨.
+            * 프록시 객체를 초기화하는 시점(= 프록시 객체를 조회하는 시점(m.getTeam().getName())) 이전에
+            * 이미 Team객체를 조회하는 쿼리가 DB에 전달됨.
             * ====================
-                Hibernate:
-                    select
-                        t1_0.TEAM_ID,
-                        t1_0.createdBy,
-                        t1_0.createdDate,
-                        t1_0.lastModifiedBy,
-                        t1_0.lastModifiedDate,
-                        t1_0.name
-                    from
-                        Team t1_0
-                    where
-                        t1_0.TEAM_ID=?
                 ====================
             * */
 
