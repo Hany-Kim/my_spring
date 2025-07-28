@@ -23,47 +23,6 @@ public class JpaMain {
             * em.find() : DB를 통해 "실제 엔티티" 객체 조회
             * em.getReference() : DB 조회를 미루는 가짜(프록시) 엔티티 객체 조회
             * */
-
-            Member member = new Member();
-            member.setUsername("hello");
-            em.persist(member);
-
-            em.flush();
-            em.clear();
-
-//            Member findMember = em.find(Member.class, member.getId());
-            // em.find()를 사용하면 DB에 조회 쿼리가 날아간것을 알 수 있다.
-
-            Member findMember = em.getReference(Member.class, member.getId());
-            // em.getReference()를 사용하면 바로 DB에 조회 쿼리가 날아가지 않는 것을 알 수 있다.
-
-            /*
-            * 출력을 하는 시점에 DB에 조회쿼리가 날아가는 것을 알 수 있다.
-            *
-            * findMember.id = 1 -> 출력
-                Hibernate:
-                    select
-                        ...
-                    from
-                        Member m1_0
-                    left join
-                        Team t1_0
-                            on t1_0.TEAM_ID=m1_0.TEAM_ID
-                    where
-                        m1_0.MEMBER_ID=?
-                findMember.username = hello -> 출력
-            *
-            * findMember.id는 DB에 조회쿼리가 "날아가기 전"에 출력된것을 확인할 수 있는데,
-            * em.getReference()에 파라미터로 member.getId()를 넣어줬기때문에
-            * DB를 거치지 않고 그대로 출력된 것이다.
-            *
-            * findMember.username를 조회하기 위해 DB에 조회쿼리가 날아간것을 알 수 있다.
-            *
-            * */
-
-            System.out.println("before findMember = " + findMember.getClass());
-            // findMember = class hellojpa.Member$HibernateProxy$1SDo0JsL
-            // em.getReference()를 사용하면 프록시클래스 임을 알 수 있다.
             /*
             * 프록시 특징
             * - 실제 클래스를 상속받아서 만들어진다.
@@ -92,10 +51,42 @@ public class JpaMain {
             * 4. DB조회를 통해 실제 Entity를 생성한다.
             * */
 
-            System.out.println("findMember.id = " + findMember.getId());
-            System.out.println("findMember.username = " + findMember.getUsername());
-            System.out.println("findMember.username = " + findMember.getUsername()); // 앞에서 프록시 객체가 .getUsername()을 요청보냈기 때문에 DB쿼리를 이미 보냈다. DB에 조회하지 않고, 타겟에 있는 값을 그대로 출력한다.
-            System.out.println("after findMember = " + findMember.getClass());
+            Member member1 = new Member();
+            member1.setUsername("hello1");
+            em.persist(member1);
+
+            Member member2 = new Member();
+            member2.setUsername("hello2");
+            em.persist(member2);
+
+            em.flush();
+            em.clear();
+
+            /*
+            Member m1 = em.find(Member.class, member1.getId());
+            Member m2 = em.find(Member.class, member2.getId());
+
+            System.out.println("m1 == m2: " + (m1.getClass() == m2.getClass()));
+            // m1 == m2: true
+            */
+
+            /*
+
+            Member m1 = em.find(Member.class, member1.getId());
+            Member m2 = em.getReference(Member.class, member2.getId());
+
+            System.out.println("m1 == m2: " + (m1.getClass() == m2.getClass()));
+            // m1 == m2: false
+            // 실제는 메서드화하여 m1,m2를 파라미터로 받기 때문에 둘다 클래스 타입으 Member로 받게 된다면
+            // 파라미터에 담긴 값이 프록시 객체일때, 구분하기 어려워 진다.
+            // instanceof를 사용해야 한다.
+            */
+
+            Member m1 = em.find(Member.class, member1.getId());
+            Member m2 = em.getReference(Member.class, member2.getId());
+
+            System.out.println("m1 == Member: " + (m1 instanceof Member));
+            System.out.println("m2 == Member: " + (m2 instanceof Member));
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
