@@ -18,72 +18,59 @@ public class JpaMain {
         tx.begin();
 
         try {
-            /*
-            * 프록시 기초
-            * em.find() vs em.getReference()
-            * em.find() : DB를 통해 "실제 엔티티" 객체 조회
-            * em.getReference() : DB 조회를 미루는 가짜(프록시) 엔티티 객체 조회
-            * */
-            /*
-            * 프록시 특징
-            * - 실제 클래스를 상속받아서 만들어진다.
-            * - 실제 클래스와 겉모양이 같다. (상속)
-            * - 사용하는 입장에서 진짜, 가짜(프록시) 객체를 구분하지 않고 사용해도 된다.(이론상)
-            * - 프록시 객체는 실제 객체의 참조를 보관
-            * - 프록시 객체를 호출하면 프록시 객체는 실제 객체의 메서드를 호출
-            *
-            * 중요)
-            * - 프록시 객체는 처음 사용할 때 한번만 초기화한다.
-            * - 프록시 객체를 초기화할 때, 프록시 객체가 실제 엔티티로 바뀌는 것은 아님!
-            *   초기화되면 프록시 객체를 통해서 실제 엔티티에 접근이 가능한 것임
-            * - 프록시 객체는 원본 엔티티를 상속받는다. 따라서 타입체크에 유의
-            *   (원본 엔티티와 프록시 객체 비교시, ==은 비교 실패한다. instance of를 사용해야한다.)
-            * - 영속성 컨텍스트에 찾는 엔티티가 이미 있으면 em.getReference()를 호출해도 실제 엔티티가 반환된다.
-            * - 영속성 컨텍스트의 도움을 받을 수 없는 준영속 상태일 때, 프록시를 초기화하면 문제 발생
-            *   하이버네이트는 org.hibernate.LazyInitializationException 예외를 터뜨림
-            * */
-            /*
-            * 프록시 객체의 초기화
-            * ```
-            * Member findMember = em.getReference(Member.class, member.getId());
-            * findMember.getUsername();
-            * ```
-            * 1. 프록시 객체로 .getUsername()을 요청보낸다.
-            * 2. 타겟(진짜 엔티티)이 값이 있다면 그값을 출력한다.
-            *   없다면 영속성 컨텍스트에게 프록시 객체가 초기화 요청을 보낸다.
-            * 3. 영속성 컨텍스트에 값이 없다면 DB 조회를 한다.
-            * 4. DB조회를 통해 실제 Entity를 생성한다.
-            * */
-            /*
-            * 프록시 확인
-            * - 프록시 인스턴스의 초기화 여부 확인
-            *   PersistenceUnitUtil().isLoaded(Object entity)
-            * - 프록시 클래스 확인 방법
-            *   entity.getClass().getName() 출력(..javasist.. or HibernateProxy...)
-            * - 프록시 강제 초기화
-            * - 참고: JPA 표준은 강제 초기화 없음. 강제 호출 해야한다.
-            *   강제호출 : ex) member.getName()*/
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
 
             Member member1 = new Member();
             member1.setUsername("member1");
+            member1.setTeam(team);
             em.persist(member1);
 
             em.flush();
             em.clear();
 
-            Member refMember = em.getReference(Member.class, member1.getId());
-            // 프록시 클래스 확인 방법
-            System.out.println("refMember = " + refMember.getClass()); // refMember = class hellojpa.Member$HibernateProxy$vKiaqJ7g
+            Member m = em.find(Member.class, member1.getId());
+            /*
+            * Member객체만 조회하는 쿼리가 DB에 날아간것을 확인할 수 있음
+            * select
+                m1_0.MEMBER_ID,
+                m1_0.createdBy,
+                m1_0.createdDate,
+                m1_0.lastModifiedBy,
+                m1_0.lastModifiedDate,
+                m1_0.TEAM_ID,
+                m1_0.USERNAME
+            from
+                Member m1_0
+            where
+                m1_0.MEMBER_ID=?
+            * */
 
-            // 프록시 인스턴스의 초기화 여부 확인
-            // 초기화 전
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // isLoaded = false
-            // 초기화 후
-            refMember.getUsername(); // 이것도 강제 초기화 한셈
-            System.out.println("isLoaded = " + emf.getPersistenceUnitUtil().isLoaded(refMember)); // isLoaded = true
+            System.out.println("m = " + m.getTeam().getClass()); // m = class hellojpa.Team$HibernateProxy$OtB6T72W
+            // Team객체는 프록시객체가 반환됨.
 
-            // 프록시 강제 초기화
-            Hibernate.initialize(refMember); // 강제 초기화
+            System.out.println("====================");
+            m.getTeam().getName();
+            System.out.println("====================");
+            /*
+            * 프록시 객체를 초기화하는 시점(= 프록시 객체를 조회하는 시점(m.getTeam().getName()))에
+            * Team객체를 조회하는 쿼리가 DB에 전달됨.
+            * ====================
+                Hibernate:
+                    select
+                        t1_0.TEAM_ID,
+                        t1_0.createdBy,
+                        t1_0.createdDate,
+                        t1_0.lastModifiedBy,
+                        t1_0.lastModifiedDate,
+                        t1_0.name
+                    from
+                        Team t1_0
+                    where
+                        t1_0.TEAM_ID=?
+                ====================
+            * */
 
             tx.commit(); // SQL 쿼리가 DB에 날아가는 시점
         } catch (Exception e) {
