@@ -47,6 +47,9 @@ public class Member extends BaseEntity {
     * - 즉시로딩을 사용하면 전혀 예상치못한 SQL이 발생
     *   연관관계 매핑되어 있는 객체가 많을 수록 JOIN되어야 하는 양이 커진다.
     * - 즉시로딩은 JPQL에서 N+1 문제를 일으킨다.
+    * - @ManyToOne, @OneToOne은 기본이 즉시 로딩
+    *   -> LAZY로 일일히 발라줘야한다.
+    * - @OneToMany, @ManyToMany는 기본이 지연 로딩
     * */
 
     public Member() {
