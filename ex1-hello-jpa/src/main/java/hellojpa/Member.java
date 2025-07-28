@@ -36,7 +36,7 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Team team;
     // (fetch = FetchType.LAZY)를 사용하면 Team객체를 프록시 객체로 반환한다. = Member객체만 DB에서 조회한다.
