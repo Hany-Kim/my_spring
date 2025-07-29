@@ -28,26 +28,10 @@ public class JpaMain {
 
             Member member2 = new Member();
             member2.setUsername("member2");
-            member2.setHomeAddress(copyAddress); // Address를 복사해서 사용
+            member2.setHomeAddress(copyAddress); // Address를 복사해서 사용 -> 그럼에도 사람은 실수 할 수 있다. => 불변 객체로 만들어야 한다.
             em.persist(member2);
 
-            member.getHomeAddress().setCity("newCity"); // member1의 주소만 변경한다면?
-            /*
-            * Update 쿼리가 1번 날아간다.
-            * DB를 확인하면 member1 한개의 주소가 update 되었다.
-            *
-            * Hibernate:
-            update Member
-            set
-                city=?,
-                street=?,
-                zipcode=?,
-                USERNAME=?,
-                endDate=?,
-                startDate=?
-            where
-                MEMBER_ID=?
-            * */
+            // member.getHomeAddress().setCity("newCity"); // 불변 객체로 변경되었기 때문에 setter를 사용할 수 없다.
 
             tx.commit();
         } catch (Exception e) {
