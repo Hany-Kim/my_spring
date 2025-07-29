@@ -1,6 +1,7 @@
 package hellojpa;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -27,7 +28,7 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 @Entity
-public class Member extends BaseEntity {
+public class Member {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "MEMBER_ID")
@@ -36,32 +37,28 @@ public class Member extends BaseEntity {
     @Column(name = "USERNAME")
     private String username;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
-    private Team team;
-    // (fetch = FetchType.LAZY)를 사용하면 Team객체를 프록시 객체로 반환한다. = Member객체만 DB에서 조회한다.
-    // (fetch = FetchType.EAGER)를 사용하면 Member객체와 Team객체를 DB에서 함께조회한다.
+    // 기간 Period
+    @Embedded
+    private Period workPeriod;
+
+    // 주소
+    @Embedded
+    private Address homeAddress;
+
     /*
-    * 프록시와 즉시로딩 주의
-    * - 가급적 지연 로딩만 사용(특히 실무에서)
-    * - 즉시로딩을 사용하면 전혀 예상치못한 SQL이 발생
-    *   연관관계 매핑되어 있는 객체가 많을 수록 JOIN되어야 하는 양이 커진다.
-    * - 즉시로딩은 JPQL에서 N+1 문제를 일으킨다.
-    * - @ManyToOne, @OneToOne은 기본이 즉시 로딩
-    *   -> LAZY로 일일히 발라줘야한다.
-    * - @OneToMany, @ManyToMany는 기본이 지연 로딩
-    * */
-    /*
-    * 지연로딩 활용 - 실무
-    * - 모든 연관관계에 지연로딩을 사용해라.
-    * - 실무에서 즉시 로딩을 사용하지 마라
-    * - JPQL fetch 조인이나, 엔티티 그래프 기능을 사용해라
-    * - 즉시 로딩은 상상하지 못한 쿼리가 나간다.
+    * 임베디드 타입과 테이블 매핑
+    * - 임베디드 타입은 엔티티의 값일 뿐이다.
+    * - 임베디드 타입을 사용하기 전과 후에 매핑하는 테이블은 같다.
+    * - 객체와 테이블을 아주 세밀하게(find-grained)매핑하는 것이 가능
+    * - 잘 설계한 ORM애플리케이션은 매핑한 테이블의 수보다 클래스의 수가 더 많음
     * */
 
-    public Member() {
-//    JPA는 내부적으로 리플렉션을 쓰기 때문에 동적으로 객체를 생성할 수 있어야 한다.
-//    따라서 기본 생성자가 필요하다.
+    public Address getHomeAddress() {
+        return homeAddress;
+    }
+
+    public void setHomeAddress(Address homeAddress) {
+        this.homeAddress = homeAddress;
     }
 
     public Long getId() {
@@ -80,11 +77,11 @@ public class Member extends BaseEntity {
         this.username = username;
     }
 
-    public Team getTeam() {
-        return team;
+    public Period getWorkPeriod() {
+        return workPeriod;
     }
 
-    public void setTeam(Team team) {
-        this.team = team;
+    public void setWorkPeriod(Period workPeriod) {
+        this.workPeriod = workPeriod;
     }
 }
