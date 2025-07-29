@@ -24,14 +24,10 @@ public class JpaMain {
             member.setHomeAddress(address);
             em.persist(member);
 
-            Address copyAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+            // 불변 객체의 값을 변경하고 싶다면? 다시 만들어서 통째로 변경하기
+            Address newAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
+            member.setHomeAddress(newAddress);
 
-            Member member2 = new Member();
-            member2.setUsername("member2");
-            member2.setHomeAddress(copyAddress); // Address를 복사해서 사용 -> 그럼에도 사람은 실수 할 수 있다. => 불변 객체로 만들어야 한다.
-            em.persist(member2);
-
-            // member.getHomeAddress().setCity("newCity"); // 불변 객체로 변경되었기 때문에 setter를 사용할 수 없다.
 
             tx.commit();
         } catch (Exception e) {
