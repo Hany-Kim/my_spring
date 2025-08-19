@@ -2,6 +2,7 @@ package hellojpa;
 
 import jakarta.persistence.AttributeOverride;
 import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -54,11 +55,15 @@ public class Member {
     @Column(name = "FOOD_NAME")
     private Set<String> favoriteFoods = new HashSet<>();
 
-    @ElementCollection
-    @CollectionTable(name = "ADDRESS", joinColumns =
-            @JoinColumn(name = "MEMBER_ID")
-    )
-    private List<Address> addressHistory = new ArrayList<>();
+//    @ElementCollection
+//    @CollectionTable(name = "ADDRESS", joinColumns =
+//            @JoinColumn(name = "MEMBER_ID")
+//    )
+//    private List<Address> addressHistory = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "MEMBER_ID")
+    private List<AddressEntity> addressHistory = new ArrayList<>();
+    // 값 타입을 사용하는 것보다 실무에서 활용할 수 있는것이 많아진다. ex. 쿼리 최적화에도 유리
 
     /*
     * 임베디드 타입과 테이블 매핑
@@ -92,19 +97,19 @@ public class Member {
         this.username = username;
     }
 
-    public List<Address> getAddressHistory() {
-        return addressHistory;
-    }
-
-    public void setAddressHistory(List<Address> addressHistory) {
-        this.addressHistory = addressHistory;
-    }
-
     public Set<String> getFavoriteFoods() {
         return favoriteFoods;
     }
 
     public void setFavoriteFoods(Set<String> favoriteFoods) {
         this.favoriteFoods = favoriteFoods;
+    }
+
+    public List<AddressEntity> getAddressHistory() {
+        return addressHistory;
+    }
+
+    public void setAddressHistory(List<AddressEntity> addressHistory) {
+        this.addressHistory = addressHistory;
     }
 }

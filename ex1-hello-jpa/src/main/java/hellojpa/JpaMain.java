@@ -27,8 +27,8 @@ public class JpaMain {
             member.getFavoriteFoods().add("족발");
             member.getFavoriteFoods().add("피자");
 
-            member.getAddressHistory().add(new Address("old1", "street1", "10000"));
-            member.getAddressHistory().add(new Address("old2", "street2", "20000"));
+            member.getAddressHistory().add(new AddressEntity("old1", "street1", "10000"));
+            member.getAddressHistory().add(new AddressEntity("old2", "street2", "20000"));
 
             em.persist(member);
             /*
@@ -70,7 +70,7 @@ public class JpaMain {
                 return Objects.hash(city, street, zipcode);
             }
              */
-            findMember.getAddressHistory().add(new Address("newCity1", "street1", "10000"));
+//            findMember.getAddressHistory().add(new Address("newCity1", "street1", "10000"));
             /*
             * - 값 타입은 엔티티와 다르게 식별자 개념이 없다.
             * - 값은 변경하면 추적이 어렵다.
@@ -79,6 +79,14 @@ public class JpaMain {
             * - 값 타입 컬렉션을 매핑하는 테이블은 모든 컬럼을 묶어서 기본키를 구성해야 함:
             *   null 입력x, 중복 저장x
             * */
+            /*
+             * - 실무에서는 상황에 따라 값 타입 컬렉션 대신에 일대다 관계를 고려하는 것이 좋다.
+             * - 일대다 관계를 위한 엔티티를 만들고, 여기에서 값 타입 사용
+             * - 영속성전이 (cascade) + 고아 객체 제거를 사용해서 값 타입 컬렉션처럼 사용
+             *
+             * 값 타입 컬렉션은 진짜 단순할 때 사용, 값이 바뀌어도 업데이트하지 않을때
+             * ex) 체크 버튼(치킨, 피자)기능
+             * */
 
             tx.commit();
         } catch (Exception e) {
