@@ -1,6 +1,8 @@
 package hellojpa;
 
 import jakarta.persistence.*;
+import java.util.List;
+import java.util.Set;
 
 public class JpaMain {
 
@@ -17,17 +19,54 @@ public class JpaMain {
         tx.begin();
 
         try {
-            Address address = new Address("city", "street", "10000");
-
             Member member = new Member();
             member.setUsername("member1");
-            member.setHomeAddress(address);
+            member.setHomeAddress(new Address("homeCity", "street", "10000"));
+
+            member.getFavoriteFoods().add("치킨");
+            member.getFavoriteFoods().add("족발");
+            member.getFavoriteFoods().add("피자");
+
+            member.getAddressHistory().add(new Address("old1", "street1", "10000"));
+            member.getAddressHistory().add(new Address("old2", "street2", "20000"));
+
             em.persist(member);
+            /*
+            값 타입이기에 FavoriteFoods와 AddressHistory는 다른 테이블이지만,
+            Memeber에 의존된다.
 
-            // 불변 객체의 값을 변경하고 싶다면? 다시 만들어서 통째로 변경하기
-            Address newAddress = new Address(address.getCity(), address.getStreet(), address.getZipcode());
-            member.setHomeAddress(newAddress);
+            값 타입은 별도의 업데이트가 필요없다.
+             */
+            em.flush();
+            em.clear();
 
+            System.out.println("==========START==========");
+            Member findMember = em.find(Member.class, member.getId());
+            /*
+            Collection들은 "지연로딩" 된다는 것을 알 수 있다.
+            ==========START==========
+            Hibernate:
+                select
+                    m1_0.MEMBER_ID,
+                    m1_0.city,
+                    m1_0.street,
+                    m1_0.zipcode,
+                    m1_0.USERNAME
+                from
+                    Member m1_0
+                where
+                    m1_0.MEMBER_ID=?
+             */
+
+            List<Address> addressHistory = findMember.getAddressHistory();
+            for (Address address : addressHistory) {
+                System.out.println("address = " + address.getCity());
+            }
+
+            Set<String> favoriteFoods = findMember.getFavoriteFoods();
+            for (String favoriteFood : favoriteFoods) {
+                System.out.println("favoriteFood = " + favoriteFood);
+            }
 
             tx.commit();
         } catch (Exception e) {
