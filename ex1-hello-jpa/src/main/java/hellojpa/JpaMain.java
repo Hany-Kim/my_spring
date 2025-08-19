@@ -42,31 +42,43 @@ public class JpaMain {
 
             System.out.println("==========START==========");
             Member findMember = em.find(Member.class, member.getId());
+
+            // homeCity -> newCity
+             // findMember.getHomeAddress().setCity("newCity"); // 사이드 이펙트 발생할 수 있다. 값타입은 immutable 해야한다.
+            Address a = findMember.getHomeAddress();
+            findMember.setHomeAddress(new Address("newCity", a.getStreet(), a.getZipcode())); // 값 타입은 항상 새로 넣어야 한다.
+
+            // 치킨 -> 한식 변경
+            findMember.getFavoriteFoods().remove("치킨");
+            findMember.getFavoriteFoods().add("한식");
+
+            findMember.getAddressHistory().remove(new Address("old1", "street1", "10000")); // 대부분의 컬렉션들은 .equals로 값을 찾는다.
             /*
-            Collection들은 "지연로딩" 된다는 것을 알 수 있다.
-            ==========START==========
-            Hibernate:
-                select
-                    m1_0.MEMBER_ID,
-                    m1_0.city,
-                    m1_0.street,
-                    m1_0.zipcode,
-                    m1_0.USERNAME
-                from
-                    Member m1_0
-                where
-                    m1_0.MEMBER_ID=?
+            해시코드가 잘 작성되지 않으면, 값이 지워지지 않고 무한히 쌓인다.
+            @Override
+            public boolean equals(Object o) {
+                if (this == o) return true;
+                if (o == null || getClass() != o.getClass()) return false;
+                Address address = (Address) o;
+                return Objects.equals(city, address.city) &&
+                        Objects.equals(street, address.street) &&
+                        Objects.equals(zipcode, address.zipcode);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(city, street, zipcode);
+            }
              */
-
-            List<Address> addressHistory = findMember.getAddressHistory();
-            for (Address address : addressHistory) {
-                System.out.println("address = " + address.getCity());
-            }
-
-            Set<String> favoriteFoods = findMember.getFavoriteFoods();
-            for (String favoriteFood : favoriteFoods) {
-                System.out.println("favoriteFood = " + favoriteFood);
-            }
+            findMember.getAddressHistory().add(new Address("newCity1", "street1", "10000"));
+            /*
+            * - 값 타입은 엔티티와 다르게 식별자 개념이 없다.
+            * - 값은 변경하면 추적이 어렵다.
+            * - 값 타입 컬렉션에 변경 사항이 발생하면, 주인 엔티티와 연관된 모든 데이터를 삭제하고,
+            *   값 타입 컬렉션에 있는 현재 값을 모두 다시 저장한다.
+            * - 값 타입 컬렉션을 매핑하는 테이블은 모든 컬럼을 묶어서 기본키를 구성해야 함:
+            *   null 입력x, 중복 저장x
+            * */
 
             tx.commit();
         } catch (Exception e) {
