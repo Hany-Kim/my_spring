@@ -22,28 +22,8 @@ public class JpaMain {
         tx.begin();
 
         try {
-            // Criteria 사용 준비
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            CriteriaQuery<Member> query = cb.createQuery(Member.class);
-
-            Root<Member> m = query.from(Member.class);
-
-            CriteriaQuery<Member> cq = query.select(m).where(cb.equal(m.get("username"), "kim"));
-            List<Member> resultList = em.createQuery(cq).getResultList();
-
-            /*
-            * Criteria
-            * - JPQL에서 쿼리는 코드 상에서 단순 문자열이다. ("select m from Member m where m.username like '%kim%'")
-            *   따라서, 동적쿼리를 만드는 것이 어렵다. (동적쿼리 쉽게 -> Criteria, MyBatis, IBatis, ...)
-            *   동적 쿼리가 없다면 문자열을 이어붙이고, 자르고 해야한다. => 오류가 많이 생길 수 있다.
-            *
-            * - 문자가 아닌 JAVA코드로 JPQL을 작성할 수 있다.
-            * - JPQL 빌더 역할
-            * - JPA 공식 기능
-            * - 너무 복잡하고 실용성이 없다.
-            *   가독성이 떨어지는 것이 단점. -> 복잡한 쿼리 작성하는게 어렵다.
-            * - QueryDSL 사용 권장
-            * */
+            em.createNativeQuery("select MEMBER_ID, city, street, zipcode, USERNAME from MEMBER")
+                    .getResultList();
 
             tx.commit();
         } catch (Exception e) {
