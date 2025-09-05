@@ -28,42 +28,11 @@ public class JpaMain {
             member.setAge(10);
             em.persist(member);
 
-            /*
-            * JPQL 문법
-            * - 엔티티와 속성은 대소문자 구분 O (Member, username)
-            * - JPQL키워드는 대소문자 구분 X (SELECT, FROM, WHERE, ...)
-            * - 엔티티 이름 사용, 테이블 이름이 아님(Member)
-            * - 별칭은 필수(m) (as 생략가능)
-            * */
-            /*
-            * 집합과 정렬
-            * - COUNT(), SUM(), AVG(), MAX(), MIN()
-            * - select COUNT(m), SUM(m.age), AVG(m.age), MAX(m.age), MIN(m.age) from Member m
-            * - GROUP BY, HAVING
-            * - ORDER BY
-            * */
-            /*
-            * - TypeQuery : 반환 타입이 명확할 때, 사용
-            * - Query : 반환 타입이 명확하지 않을 때, 사용
-            * */
-            TypedQuery<Member> query1 = em.createQuery("select m from Member m", Member.class);
-            TypedQuery<String> query2 = em.createQuery("select m.username from Member m", String.class);
-            Query query3 = em.createQuery("select m.username, m.age from Member m");
+            TypedQuery<Member> query = em.createQuery("select m from Member m where m.username = :username", Member.class);
+            query.setParameter("username", "member1");
 
-            query1.getResultList();
-
-            Member result = query1.getSingleResult();
-            System.out.println("result = " + result);
-
-            /*
-            * 결과조회 API
-            * - query.getResultList(): 결과가 하나이상 일때, 리스트 반반
-            *   결과가 없으면 빈리스트 반환 (NullPointerException 방지)
-            * - Query.getSingleResult(): 결과가 하나일때 단일객체 반환, 결과가 무조건 하나일 때 사용할 것을 유의
-            *   - 결과가 없으면 : javax.persistence.NoResultException
-            *   - 결과가 둘이상이면 : javax.persistence.NonUniqueResultException
-            * */
-
+            Member singleResult = query.getSingleResult();
+            System.out.println("singleResult = " + singleResult);
 
             tx.commit();
         } catch (Exception e) {
