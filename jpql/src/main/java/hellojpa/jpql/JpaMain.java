@@ -55,6 +55,16 @@ public class JpaMain {
             Member result = query1.getSingleResult();
             System.out.println("result = " + result);
 
+            /*
+            * 결과조회 API
+            * - query.getResultList(): 결과가 하나이상 일때, 리스트 반반
+            *   결과가 없으면 빈리스트 반환 (NullPointerException 방지)
+            * - Query.getSingleResult(): 결과가 하나일때 단일객체 반환, 결과가 무조건 하나일 때 사용할 것을 유의
+            *   - 결과가 없으면 : javax.persistence.NoResultException
+            *   - 결과가 둘이상이면 : javax.persistence.NonUniqueResultException
+            * */
+
+
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
