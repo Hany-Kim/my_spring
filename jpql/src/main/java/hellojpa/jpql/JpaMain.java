@@ -42,16 +42,17 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            em.createQuery("select distinct m.username, m.age from Member m")
+            List resultList = em.createQuery("select distinct m.username, m.age from Member m")
                     .getResultList();
 
+            // m.username, m.age 두 속성을 가진 타입을 명시할 수 없어서 Object를 반환
+            Object o = resultList.get(0);
+            Object[] objects = (Object[]) o;
+            System.out.println("username = " + objects[0]);
+            System.out.println("age = " + objects[1]);
             /*
-            * select
-                distinct
-                    m1_0.username,
-                    m1_0.age
-                from
-                    Member m1_0
+            * username = member1
+            * age = 10
             * */
 
             tx.commit();
