@@ -42,26 +42,16 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            List<Team> result = em.createQuery("select t from Member m join m.team t", Team.class)
+            em.createQuery("select o.address from Order o", Address.class)
                     .getResultList();
-            /*
-            * select
-                    t1_0.id,
-                    t1_0.name
-                from
-                    Member m1_0
-                join
-                    Team t1_0
-                        on t1_0.id=m1_0.TEAM_ID
-            * */
 
             /*
-            * 참고) 경로표현식
-            * select m.team from Member m -> 실제로는 이렇게 사용하는 것을 지양
-            * join이 사용될 때는, join쿼리도 한눈에 보여야 한다.
-            * join은 성능에 영향을 많이주고, 쿼리 튜닝할 요소가 많기 때문.
-            *
-            * select t from Member m join m.team t -> 이렇게 사용하는 것을 지향
+            * 임베디드 타입 프로젝션
+            * select
+                o1_0.city,
+                o1_0.street,
+                o1_0.zipcode from
+                    ORDERS o1_0
             * */
 
             tx.commit();
