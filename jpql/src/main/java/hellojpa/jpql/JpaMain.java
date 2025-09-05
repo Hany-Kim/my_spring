@@ -42,7 +42,7 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            List<Team> result = em.createQuery("select m.team from Member m", Team.class)
+            List<Team> result = em.createQuery("select t from Member m join m.team t", Team.class)
                     .getResultList();
             /*
             * select
@@ -60,6 +60,8 @@ public class JpaMain {
             * select m.team from Member m -> 실제로는 이렇게 사용하는 것을 지양
             * join이 사용될 때는, join쿼리도 한눈에 보여야 한다.
             * join은 성능에 영향을 많이주고, 쿼리 튜닝할 요소가 많기 때문.
+            *
+            * select t from Member m join m.team t -> 이렇게 사용하는 것을 지향
             * */
 
             tx.commit();
