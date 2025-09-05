@@ -49,22 +49,17 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m from Member m inner join m.team t";
+            String query = "select m from Member m left outer join m.team t";
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
-            /*
-            * select
-                m1_0.id,
-                m1_0.age,
-                m1_0.TEAM_ID,
-                m1_0.username
-            from
-                Member m1_0
-            join
-                Team t1_0
-                    on t1_0.id=m1_0.TEAM_ID
-            * */
+            /* select
+                    m
+                from
+                    Member m
+                left outer join
+                    m.team t
+            */
 
             tx.commit();
         } catch (Exception e) {
