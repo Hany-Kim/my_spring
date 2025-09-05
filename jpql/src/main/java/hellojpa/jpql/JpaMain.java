@@ -49,7 +49,7 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m from Member m left join m.team t on t.name = 'teamA'";
+            String query = "select m from Member m left join Team t on m.username = t.name";
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
@@ -59,7 +59,7 @@ public class JpaMain {
             *   - 1. 조인 대상 필터링
             *     - JPQL: SELECT m, t FROM Member m LEFT JOIN m.team t on t.name = 'A';
             *     - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t on m.TEAM_ID=t.id AND = 'A';
-            *   - 2. 연관고나계 없는 엔티티 외부 조인 (하이버네이트 5.1부터)
+            *   - 2. 연관관계 없는 엔티티 외부 조인 (하이버네이트 5.1부터)
             *     - JPQL: SELECT m, t FROM Member m LEFT JOIN Team t on m.username = t.name;
             *     - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t on m.username = t.name;
             * */
