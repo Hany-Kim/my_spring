@@ -42,15 +42,21 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            List<Object[]> resultList = em.createQuery("select distinct m.username, m.age from Member m")
+            List<MemberDTO> result = em.createQuery(
+                            "select new hellojpa.jpql.MemberDTO(m.username, m.age) from Member m", MemberDTO.class)
                     .getResultList();
 
-            Object[] result = resultList.get(0);
-            System.out.println("username = " + result[0]);
-            System.out.println("age = " + result[1]);
+            MemberDTO memberDTO = result.get(0);
+            System.out.println("memberDTO = " + memberDTO.getUsername());
+            System.out.println("memberDTO = " + memberDTO.getAge());
             /*
             * username = member1
             * age = 10
+            * */
+
+            /*
+            * 패키지 명이길어지면 쿼리가 길어지는 단점이 있다.
+            * -> QueryDSL 사용하면 해결
             * */
 
             tx.commit();
