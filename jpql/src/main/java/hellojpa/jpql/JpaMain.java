@@ -42,18 +42,16 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            em.createQuery("select o.address from Order o", Address.class)
+            em.createQuery("select distinct m.username, m.age from Member m")
                     .getResultList();
 
             /*
-            * 임베디드 타입 프로젝션
-            * select a from Address a -> 임베디드 타입이라 이런 쿼리는 사용할 수 없다.
-            *
             * select
-                o1_0.city,
-                o1_0.street,
-                o1_0.zipcode from
-                    ORDERS o1_0
+                distinct
+                    m1_0.username,
+                    m1_0.age
+                from
+                    Member m1_0
             * */
 
             tx.commit();
