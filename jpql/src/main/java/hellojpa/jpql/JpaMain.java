@@ -47,6 +47,8 @@ public class JpaMain {
 
             /*
             * 임베디드 타입 프로젝션
+            * select a from Address a -> 임베디드 타입이라 이런 쿼리는 사용할 수 없다.
+            *
             * select
                 o1_0.city,
                 o1_0.street,
