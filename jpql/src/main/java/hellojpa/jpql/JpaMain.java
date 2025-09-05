@@ -28,9 +28,13 @@ public class JpaMain {
             member.setAge(10);
             em.persist(member);
 
-            Member result = em.createQuery("select m from Member m where m.username = :username", Member.class)
-                    .setParameter("username", "member1")
+            Member result = em.createQuery("select m from Member m where m.username = ?1", Member.class)
+                    .setParameter(1, "member1")
                     .getSingleResult();
+
+            /*
+            * 위치기준 바인딩도 있지만 왠만하면 지향
+            * */
 
             System.out.println("result = " + result.getUsername());
 
