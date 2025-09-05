@@ -34,25 +34,37 @@ public class JpaMain {
             * - DISTINCT로 중복 제거
             * */
 
-            for(int i=0; i<100; i++) {
-                Member member = new Member();
-                member.setUsername("member" + i);
-                member.setAge(i);
-                em.persist(member);
-            }
+            Team team = new Team();
+            team.setName("teamA");
+            em.persist(team);
+
+            Member member = new Member();
+            member.setUsername("member1");
+            member.setAge(10);
+
+            member.setTeam(team);
+
+            em.persist(member);
 
             em.flush();
             em.clear();
 
-            List<Member> result = em.createQuery("select m from Member m order by m.age desc", Member.class)
-                    .setFirstResult(1)
-                    .setMaxResults(10)
+            String query = "select m from Member m inner join m.team t";
+            List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
-            System.out.println("result.size() = " + result.size());
-            for (Member member1 : result) {
-                System.out.println("member1 = " + member1);
-            }
+            /*
+            * select
+                m1_0.id,
+                m1_0.age,
+                m1_0.TEAM_ID,
+                m1_0.username
+            from
+                Member m1_0
+            join
+                Team t1_0
+                    on t1_0.id=m1_0.TEAM_ID
+            * */
 
             tx.commit();
         } catch (Exception e) {
