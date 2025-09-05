@@ -49,18 +49,20 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            String query = "select m from Member m, Team t where m.username = t.name";
+            String query = "select m from Member m left join m.team t on t.name = 'teamA'";
             List<Member> result = em.createQuery(query, Member.class)
                     .getResultList();
 
-            /* select
-                    m
-                from
-                    Member m,
-                    Team t
-                where
-                    m.username = t.name
-            */
+            /*
+            * 조인 - ON절
+            * - ON절을 활용한 조인(JPA 2.1부터 지원)
+            *   - 1. 조인 대상 필터링
+            *     - JPQL: SELECT m, t FROM Member m LEFT JOIN m.team t on t.name = 'A';
+            *     - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t on m.TEAM_ID=t.id AND = 'A';
+            *   - 2. 연관고나계 없는 엔티티 외부 조인 (하이버네이트 5.1부터)
+            *     - JPQL: SELECT m, t FROM Member m LEFT JOIN Team t on m.username = t.name;
+            *     - SQL: SELECT m.*, t.* FROM Member m LEFT JOIN Team t on m.username = t.name;
+            * */
 
             tx.commit();
         } catch (Exception e) {
