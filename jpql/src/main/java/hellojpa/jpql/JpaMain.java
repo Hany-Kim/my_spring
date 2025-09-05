@@ -42,20 +42,25 @@ public class JpaMain {
             em.flush();
             em.clear();
 
-            List<Member> result = em.createQuery("select m from Member m", Member.class)
+            List<Team> result = em.createQuery("select m.team from Member m", Team.class)
                     .getResultList();
             /*
-            * select m from Member m 쿼리가 날아갔을 때,
-            * select절에 있는 m은 Member 엔티티이다.
-            * 반환타입도 Member엔티티들이다.
-            *
-            * 여기서, 반환타입의 List<Member>는 영속성 컨텍스트에 관리가 될것인가? 안 될것인가?
-            * 영속성 컨텍스트에 관리된다. 그래서 엔티티 프로젝션이다.
+            * select
+                    t1_0.id,
+                    t1_0.name
+                from
+                    Member m1_0
+                join
+                    Team t1_0
+                        on t1_0.id=m1_0.TEAM_ID
             * */
 
-            Member findMember = result.get(0);
-            findMember.setAge(20); // DB업데이트 되면 영속성관리됨.
-
+            /*
+            * 참고) 경로표현식
+            * select m.team from Member m -> 실제로는 이렇게 사용하는 것을 지양
+            * join이 사용될 때는, join쿼리도 한눈에 보여야 한다.
+            * join은 성능에 영향을 많이주고, 쿼리 튜닝할 요소가 많기 때문.
+            * */
 
             tx.commit();
         } catch (Exception e) {
