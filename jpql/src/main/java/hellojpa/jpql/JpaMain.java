@@ -39,15 +39,23 @@ public class JpaMain {
             member.setAge(10);
             em.persist(member);
 
-            Member result = em.createQuery("select m from Member m where m.username = ?1", Member.class)
-                    .setParameter(1, "member1")
-                    .getSingleResult();
+            em.flush();
+            em.clear();
 
+            List<Member> result = em.createQuery("select m from Member m", Member.class)
+                    .getResultList();
             /*
-            * 위치기준 바인딩도 있지만 왠만하면 지향
+            * select m from Member m 쿼리가 날아갔을 때,
+            * select절에 있는 m은 Member 엔티티이다.
+            * 반환타입도 Member엔티티들이다.
+            *
+            * 여기서, 반환타입의 List<Member>는 영속성 컨텍스트에 관리가 될것인가? 안 될것인가?
+            * 영속성 컨텍스트에 관리된다. 그래서 엔티티 프로젝션이다.
             * */
 
-            System.out.println("result = " + result.getUsername());
+            Member findMember = result.get(0);
+            findMember.setAge(20); // DB업데이트 되면 영속성관리됨.
+
 
             tx.commit();
         } catch (Exception e) {
