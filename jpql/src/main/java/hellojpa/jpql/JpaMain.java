@@ -33,6 +33,13 @@ public class JpaMain {
             * - 엔티티 이름 사용, 테이블 이름이 아님(Member)
             * - 별칭은 필수(m) (as 생략가능)
             * */
+            /*
+            * 집합과 정렬
+            * - COUNT(), SUM(), AVG(), MAX(), MIN()
+            * - select COUNT(m), SUM(m.age), AVG(m.age), MAX(m.age), MIN(m.age) from Member m
+            * - GROUP BY, HAVING
+            * - ORDER BY
+            * */
             tx.commit();
         } catch (Exception e) {
             tx.rollback();
